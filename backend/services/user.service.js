@@ -4,6 +4,7 @@ import User from '../models/users.js';
 import bcrypt from 'bcryptjs';
 import createToken from '../utils/createToken.js';
 import Role from '../models/roles.js';
+import { upload } from './upload.service.js';
 
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
@@ -112,4 +113,72 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'User logged out successfully' });
 });
 
-export { getAllUsers, createUser, loginUser, logoutUser };
+const getUserProfile = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    await connectDB();
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.roleId,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Something broke!' });
+  }
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const { username, email, password } = req.body;
+
+  try {
+    let profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const updateUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        username,
+        email,
+        password,
+        profilePicture,
+        updatedAt: Date.now(),
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updateUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      _id: updateUser._id,
+      username: updateUser.username,
+      email: updateUser.email,
+      profilePicture: updateUser.profilePicture,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Something broke!' });
+  }
+});
+
+export {
+  getAllUsers,
+  createUser,
+  loginUser,
+  logoutUser,
+  getUserProfile,
+  updateProfile,
+};
