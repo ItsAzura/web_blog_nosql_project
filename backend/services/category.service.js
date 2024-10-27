@@ -6,6 +6,9 @@ const getAllCategories = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const categories = await Category.find();
+    if (!categories) {
+      return res.status(404).json({ message: 'No categories found' });
+    }
     res.json(categories);
   } catch (error) {
     console.error(error);
@@ -31,6 +34,10 @@ const createCategory = asyncHandler(async (req, res) => {
       name,
     });
 
+    if (!category) {
+      return res.status(400).json({ message: 'Invalid category data' });
+    }
+
     await category.save();
 
     return res.status(201).json({
@@ -47,11 +54,10 @@ const getCategoryById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const category = await Category.findById(req.params.id);
-    if (category) {
-      res.json(category);
-    } else {
-      res.status(404).send('Category not found');
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
+    res.json(category);
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');
@@ -68,13 +74,14 @@ const updateCategory = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const category = await Category.findById(req.params.id);
-    if (category) {
-      category.name = name;
-      await category.save();
-      res.json(category);
-    } else {
-      res.status(404).send('Category not found');
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
+
+    category.name = name;
+    await category.save();
+    res.json(category);
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');
@@ -85,12 +92,18 @@ const deleteCategory = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const category = await Category.findById(req.params.id);
-    if (category) {
-      await category.remove();
-      res.json({ message: 'Category removed' });
-    } else {
-      res.status(404).send('Category not found');
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
+
+    const result = await category.remove();
+
+    if (!result) {
+      return res.status(400).json({ message: 'Category could not be removed' });
+    }
+
+    res.json({ message: 'Category removed' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');

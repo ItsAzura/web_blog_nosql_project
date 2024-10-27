@@ -10,6 +10,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ message: 'No users found' });
+    }
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -24,10 +27,10 @@ const createUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (password.length < 6) {
+  if (password.length < 8) {
     return res
       .status(400)
-      .json({ message: 'Password must be at least 6 characters' });
+      .json({ message: 'Password must be at least 8 characters' });
   }
 
   try {
@@ -50,6 +53,10 @@ const createUser = asyncHandler(async (req, res) => {
       password: hashedPassword,
       roleId: role._id,
     });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid user data' });
+    }
 
     await user.save();
 

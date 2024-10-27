@@ -6,6 +6,9 @@ const getAllFavorites = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const favorites = await Favorite.find();
+    if (!favorites) {
+      return res.status(404).json({ message: 'No favorites found' });
+    }
     res.json(favorites);
   } catch (error) {
     console.error(error);
@@ -19,6 +22,9 @@ const getFavoritesByUser = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const favorites = await Favorite.find({ user: userId });
+    if (!favorites) {
+      return res.status(404).json({ message: 'No favorites found' });
+    }
     res.json(favorites);
   } catch (error) {
     console.error(error);
@@ -27,10 +33,12 @@ const getFavoritesByUser = asyncHandler(async (req, res) => {
 
 const getFavoritesByPost = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
-
   try {
     await connectDB();
     const favorites = await Favorite.find({ post: postId });
+    if (!favorites) {
+      return res.status(404).json({ message: 'No favorites found' });
+    }
     res.json(favorites);
   } catch (error) {
     console.error(error);
@@ -59,6 +67,10 @@ const createFavorite = asyncHandler(async (req, res) => {
       post: postId,
     });
 
+    if (!favorite) {
+      return res.status(400).json({ message: 'Invalid favorite data' });
+    }
+
     await favorite.save();
     res.status(201).json(favorite);
   } catch (error) {
@@ -72,7 +84,12 @@ const deleteFavorite = asyncHandler(async (req, res) => {
 
   try {
     await connectDB();
-    await Favorite.findByIdAndDelete(favoriteId);
+    const result = await Favorite.findByIdAndDelete(favoriteId);
+
+    if (!result) {
+      return res.status(404).json({ message: 'Favorite not found' });
+    }
+
     res.json({ message: 'Favorite deleted' });
   } catch (error) {
     console.error(error);

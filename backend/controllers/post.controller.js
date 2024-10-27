@@ -11,21 +11,22 @@ import {
 } from '../services/post.service.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import { upload } from '../services/upload.service.js';
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(getAllPosts)
+  .get(getAllPosts, authenticate)
   .post(authenticate, upload.single('coverImage'), createPost);
 
-router.route('/top-liked').get(getTopLikedPosts);
+router.route('/top-liked').get(getTopLikedPosts, authenticate);
 
-router.route('/latest').get(getLatestPosts);
+router.route('/latest').get(getLatestPosts, authenticate);
 
 router
   .route('/:id')
-  .get(getPostById)
+  .get(getPostById, authenticate)
   .put(authenticate, updatePost, upload.single('coverImage'))
   .delete(authenticate, deletePost);
 

@@ -6,15 +6,19 @@ import {
   createFavorite,
   deleteFavorite,
 } from '../services/favorite.service.js';
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').get(getAllFavorites).post(createFavorite);
+router
+  .route('/')
+  .get(getAllFavorites, authenticate)
+  .post(createFavorite, authenticate);
 
-router.route('/user/:userId').get(getFavoritesByUser);
+router.route('/user/:userId').get(getFavoritesByUser, authenticate);
 
-router.route('/post/:postId').get(getFavoritesByPost);
+router.route('/post/:postId').get(getFavoritesByPost, authenticate);
 
-router.route('/:id').delete(deleteFavorite);
+router.route('/:id').delete(deleteFavorite, authenticate);
 
 export default router;

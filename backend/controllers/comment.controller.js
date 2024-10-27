@@ -7,15 +7,22 @@ import {
   updateComment,
   deleteComment,
 } from '../services/comment.service.js';
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.route('/').get(getAllComments).post(createComment);
+router
+  .route('/')
+  .get(getAllComments, authenticate)
+  .post(createComment, authenticate);
 
-router.route('/post/:postId').get(getCommentsByPost);
+router.route('/post/:postId').get(getCommentsByPost, authenticate);
 
-router.route('/user/:userId').get(getCommentsByUser);
+router.route('/user/:userId').get(getCommentsByUser, authenticate);
 
-router.route('/:id').put(updateComment).delete(deleteComment);
+router
+  .route('/:id')
+  .put(updateComment, authenticate)
+  .delete(deleteComment, authenticate);
 
 export default router;

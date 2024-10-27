@@ -6,6 +6,9 @@ const getAllRoles = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const roles = await Role.find();
+    if (!roles) {
+      return res.status(404).json({ message: 'No roles found' });
+    }
     res.json(roles);
   } catch (error) {
     console.error(error);
@@ -24,7 +27,12 @@ const createRole = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const role = new Role({ name, description });
+    if (!role) {
+      res.status(400).send('Invalid role data');
+      return;
+    }
     const newRole = await role.save();
+
     res.json(newRole);
   } catch (error) {
     console.error(error);

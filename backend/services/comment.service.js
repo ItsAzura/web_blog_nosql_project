@@ -6,6 +6,9 @@ const getAllComments = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const comments = await Comment.find();
+    if (!comments) {
+      return res.status(404).json({ message: 'No comments found' });
+    }
     res.json(comments);
   } catch (error) {
     console.error(error);
@@ -19,6 +22,9 @@ const getCommentsByPost = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const comments = await Comment.find({ postId });
+    if (!comments) {
+      return res.status(404).json({ message: 'No comments found' });
+    }
     res.json(comments);
   } catch (error) {
     console.error(error);
@@ -31,6 +37,9 @@ const getCommentsByUser = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const comments = await Comment.find({ commenterId });
+    if (!comments) {
+      return res.status(404).json({ message: 'No comments found' });
+    }
     res.json(comments);
   } catch (error) {
     console.error(error);
@@ -52,6 +61,10 @@ const createComment = asyncHandler(async (req, res) => {
       comment,
       parentCommentId,
     });
+
+    if (!newComment) {
+      return res.status(400).json({ message: 'Comment could not be created' });
+    }
 
     await newComment.save();
     res.status(201).json(newComment);
@@ -76,6 +89,10 @@ const updateComment = asyncHandler(async (req, res) => {
       { new: true }
     );
 
+    if (!updatedComment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
     res.json(updatedComment);
   } catch (error) {
     console.error(error);
@@ -86,7 +103,10 @@ const updateComment = asyncHandler(async (req, res) => {
 const deleteComment = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    await Comment.findByIdAndDelete(req.params.id);
+    const result = await Comment.findByIdAndDelete(req.params.id);
+    if (!result) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
     console.error(error);

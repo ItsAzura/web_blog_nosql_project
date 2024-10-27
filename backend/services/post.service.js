@@ -7,6 +7,9 @@ const getAllPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const posts = await Post.find();
+    if (!posts) {
+      return res.status(404).json({ message: 'No posts found' });
+    }
     res.json(posts);
   } catch (error) {
     console.error(error);
@@ -18,6 +21,9 @@ const getTopLikedPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const posts = await Post.find().sort({ liked: -1 }).limit(5);
+    if (!posts) {
+      return res.status(404).json({ message: 'No posts found' });
+    }
     res.json(posts);
   } catch (error) {
     console.error(error);
@@ -29,6 +35,9 @@ const getLatestPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const posts = await Post.find().sort({ createdAt: -1 }).limit(8);
+    if (!posts) {
+      return res.status(404).json({ message: 'No posts found' });
+    }
     res.json(posts);
   } catch (error) {
     console.error(error);
@@ -40,11 +49,10 @@ const getPostById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const post = await Post.findById(req.params.id);
-    if (post) {
-      res.json(post);
-    } else {
-      res.status(404).send('Post not found');
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
     }
+    res.json(post);
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');
@@ -55,6 +63,9 @@ const getPostsByUser = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const posts = await Post.find({ user: req.params.userId });
+    if (!posts) {
+      return res.status(404).json({ message: 'No posts found' });
+    }
     res.json(posts);
   } catch (error) {
     console.error(error);
@@ -162,12 +173,11 @@ const deletePost = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const post = await Post.findById(req.params.id);
-    if (post) {
-      await post.remove();
-      res.json({ message: 'Post removed' });
-    } else {
-      res.status(404).send('Post not found');
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
     }
+    await post.remove();
+    res.json({ message: 'Post removed' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');
