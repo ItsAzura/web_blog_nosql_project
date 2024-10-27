@@ -11,7 +11,6 @@ import {
 } from '../services/post.service.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import { upload } from '../services/upload.service.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

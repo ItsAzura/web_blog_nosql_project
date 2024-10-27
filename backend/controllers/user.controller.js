@@ -20,6 +20,6 @@ router.route('/logout').post(logoutUser);
 router
   .route('/profile/:userId')
   .get(getUserProfile, authenticate)
-  .put(upload.single('profilePicture'), updateProfile, authenticate);
+  .put(upload.single('profilePicture'), updateProfile);
 
 export default router;
