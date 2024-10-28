@@ -13,7 +13,7 @@ const SignUp = () => {
   const [confirmpassword, setConfirmPassword] = useState('');
   const [shake, setShake] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     if (!username || !email || !password || !confirmpassword) {

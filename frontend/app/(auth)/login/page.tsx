@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [shake, setShake] = useState(false);
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!email || !password) {
