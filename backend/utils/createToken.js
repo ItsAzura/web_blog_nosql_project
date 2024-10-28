@@ -1,3 +1,4 @@
+import { setCookie } from 'cookies-next';
 import jwt from 'jsonwebtoken';
 
 const createToken = (res, userId) => {
@@ -5,11 +6,12 @@ const createToken = (res, userId) => {
     expiresIn: '7d',
   });
 
-  res.cookie('blog_token', token, {
+  setCookie('blog_token', token, {
+    req: res.req,
+    res: res.res,
     httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days (seconds)
     sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   return token;
