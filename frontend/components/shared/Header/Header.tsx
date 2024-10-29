@@ -73,7 +73,7 @@ const Header: React.FC = () => {
 
         <nav className="text-xl hidden md:flex space-x-8">
           <Link
-            href="#"
+            href="/"
             className="text-gray-300 hover:text-white transition-colors duration-200 hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,1)]"
           >
             Home Page
@@ -89,6 +89,12 @@ const Header: React.FC = () => {
             className="text-gray-300 hover:text-white transition-colors duration-200 hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,1)]"
           >
             About Us
+          </Link>
+          <Link
+            href="/workspace"
+            className="text-gray-300 hover:text-white transition-colors duration-200 hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,1)]"
+          >
+            Your Work Space
           </Link>
         </nav>
 

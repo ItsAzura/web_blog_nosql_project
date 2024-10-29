@@ -1,101 +1,162 @@
-import Image from "next/image";
+'use client';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { Post } from '../../interface';
+import FeaturedPosts from '@/components/Home/FeaturedPosts';
+import LatestPosts from '@/components/Home/LatestPosts';
+import Testimonials from '@/components/Home/Testimonials';
+
+interface DecodedToken {
+  userId: string;
+  exp: number;
+  iat: number;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  profilePicture?: string;
+}
+
+const mockPosts: Post[] = [
+  {
+    id: '1',
+    title: 'Exploring the Future of AI',
+    excerpt:
+      'Dive into the advancements in AI and what it holds for the future.',
+    imageUrl: '/ai-future.jpg',
+    author: 'John Doe',
+    date: '2024-10-25',
+  },
+  {
+    id: '2',
+    title: 'The Importance of Mental Health',
+    excerpt:
+      'Mental health is essential for overall well-being. Learn more here.',
+    imageUrl: '/mental-health.jpg',
+    author: 'Jane Smith',
+    date: '2024-10-20',
+  },
+  {
+    id: '3',
+    title: 'Achieving Work-Life Balance',
+    excerpt: 'Tips on how to maintain a healthy work-life balance.',
+    imageUrl: 'work-life.jpg',
+    author: 'Mary Johnson',
+    date: '2024-10-18',
+  },
+  {
+    id: '4',
+    title: 'A Guide to Financial Independence',
+    excerpt: 'Take control of your finances and achieve independence.',
+    imageUrl: 'finance.jpg',
+    author: 'Chris Lee',
+    date: '2024-10-15',
+  },
+  {
+    id: '5',
+    title: 'Sustainable Living Tips',
+    excerpt: 'Discover ways to live a sustainable life for a greener future.',
+    imageUrl: '/sustainability.jpg',
+    author: 'Pat Brown',
+    date: '2024-10-12',
+  },
+];
+
+const mockTestimonials = [
+  {
+    id: '1',
+    name: 'Emma Watson',
+    role: 'Reader',
+    message:
+      "This blog has completely changed the way I think about my daily life. It's insightful and very relatable!",
+  },
+  {
+    id: '2',
+    name: 'Liam Neeson',
+    role: 'Frequent Visitor',
+    message:
+      'I love the variety of topics covered here. The articles are well-researched and engaging.',
+  },
+  {
+    id: '3',
+    name: 'Sophia Turner',
+    role: 'Blogger',
+    message:
+      'As a fellow blogger, I appreciate the quality of content shared on this platform. Keep up the great work!',
+  },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [user, setUser] = useState<User | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+  useEffect(() => {
+    const token = Cookies.get('blog_token');
+
+    if (token) {
+      const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
+
+      const fetchUserInfo = async () => {
+        try {
+          const response = await axios.get<User>(
+            `http://localhost:5000/api/users/profile/${decodedToken.userId}`
+          );
+
+          setUser(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchUserInfo();
+    }
+  }, []);
+
+  return (
+    <>
+      <section className="py-14 ml-4">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-10">
+          {/* Left - Text Section */}
+          <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+            {user && (
+              <p className="text-xl text-gray-200 dark:text-white mb-4">
+                Welcome back, {user.username}!
+              </p>
+            )}
+            <h1 className="text-3xl md:text-7xl font-bold text-gray-800 dark:text-white leading-tight mb-4">
+              Welcome to Azura's Blog
+            </h1>
+            <p className="mt-4 text-gray-500 dark:text-gray-300 text-lg">
+              This is a simple blog application where you can create, read,
+              update, and delete blogs.
+            </p>
+            <button className="mt-6 bg-indigo-500 text-white px-6 py-3 rounded-md hover:bg-indigo-600 transition duration-300">
+              Enjoy your stay!
+            </button>
+          </div>
+
+          {/* Right - Image Section */}
+          <div className="md:w-1/2 flex justify-center">
             <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/hero.png"
+              alt="Illustration of people reading and writing blogs"
+              width={500}
+              height={500}
+              className="w-full max-w-sm md:max-w-md rounded-lg shadow-lg"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      <FeaturedPosts posts={mockPosts} />
+
+      <LatestPosts posts={mockPosts} />
+
+      <Testimonials testimonials={mockTestimonials} />
+    </>
   );
 }
