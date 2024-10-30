@@ -6,11 +6,46 @@ import Category from '../models/categories.js';
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const posts = await Post.find();
+    const { title, categoryId, page, limit = 10 } = req.query;
+
+    if (!page) {
+      return res.status(400).json({ message: 'Page is required in query' });
+    }
+
+    const filter = {};
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
+    }
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const posts = await Post.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate({
+        path: 'authorId',
+        model: 'User',
+        select: 'username',
+      });
+
+    const totalPosts = await Post.countDocuments(filter);
+    const totalPages = Math.ceil(totalPosts / parseInt(limit));
+
     if (!posts) {
       return res.status(404).json({ message: 'No posts found' });
     }
-    res.json(posts);
+
+    res.json({
+      posts,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPosts,
+        totalPages,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');

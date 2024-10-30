@@ -99,8 +99,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const token = createToken(res, existingUser._id);
 
-    console.log(token);
-
     res.status(200).json({
       message: 'User logged in successfully',
       _id: existingUser._id,

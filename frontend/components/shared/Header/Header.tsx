@@ -91,7 +91,7 @@ const Header: React.FC = () => {
             About Us
           </Link>
           <Link
-            href="/blog"
+            href="/post"
             className="text-gray-300 hover:text-white transition-colors duration-200 hover:drop-shadow-[0px_0px_4px_rgba(255,255,255,1)]"
           >
             Blog

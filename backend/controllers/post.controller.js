@@ -17,7 +17,7 @@ const router = express.Router();
 router
   .route('/')
   .get(getAllPosts, authenticate)
-  .post(authenticate, upload.single('coverImage'), createPost);
+  .post(upload.single('coverImage'), createPost);
 
 router.route('/top-liked').get(getTopLikedPosts, authenticate);
 

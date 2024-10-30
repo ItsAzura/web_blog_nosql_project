@@ -17,12 +17,11 @@ const getAllCategories = asyncHandler(async (req, res) => {
 });
 
 const createCategory = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, description } = req.body;
 
   if (!name) {
     return res.status(400).json({ message: 'Name is required' });
   }
-
   try {
     await connectDB();
     const existingCategory = await Category.findOne({ name });
@@ -32,6 +31,7 @@ const createCategory = asyncHandler(async (req, res) => {
 
     const category = new Category({
       name,
+      description,
     });
 
     if (!category) {

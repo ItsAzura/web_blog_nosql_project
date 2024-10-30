@@ -1,9 +1,9 @@
 import React from 'react';
-import { Post } from '../../interface';
+import { IPost } from '../../interface';
 import Link from 'next/link';
 
 interface FeaturedPostsProps {
-  posts: Post[];
+  posts: IPost[];
 }
 
 const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
@@ -22,7 +22,7 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
             {/* Image with overlay */}
             <div className="relative h-52">
               <img
-                src={post.imageUrl}
+                src={post.coverImage}
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
