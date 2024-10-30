@@ -1,5 +1,6 @@
 import React from 'react';
 import { Post } from '../../interface';
+import Link from 'next/link';
 
 interface FeaturedPostsProps {
   posts: Post[];
@@ -8,15 +9,15 @@ interface FeaturedPostsProps {
 const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
   return (
     <section className="text-white py-12 px-8 md:px-16 lg:px-24">
-      <h2 className="text-4xl font-semibold text-center mb-12 text-white tracking-tight">
+      <h2 className="text-4xl font-semibold text-center mb-12 text-white tracking-tight uppercase drop-shadow-[0px_0px_6px_rgba(41,125,204,1)] transition-shadow">
         Featured Posts
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-8">
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-gray-800 rounded-lg shadow-lg shadow-black/30 overflow-hidden transition-transform duration-300 hover:scale-105 group"
+            className="bg-gray-800 rounded-lg shadow-lg shadow-black/30 overflow-hidden transition-transform duration-300 hover:scale-105 group hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]"
           >
             {/* Image with overlay */}
             <div className="relative h-52">
@@ -46,6 +47,15 @@ const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* View More button */}
+      <div className="flex justify-end">
+        <Link href={`/posts`}>
+          <button className="py-2 px-6 rounded border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-300">
+            View More
+          </button>
+        </Link>
       </div>
     </section>
   );

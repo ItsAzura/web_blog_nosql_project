@@ -23,7 +23,7 @@ const AboutUsComponent: React.FC<AboutUsProps> = ({ members }) => {
         {members.map((member) => (
           <div
             key={member.id}
-            className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 group"
+            className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 group hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]"
           >
             <div className="relative h-48">
               <img

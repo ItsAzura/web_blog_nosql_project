@@ -28,7 +28,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ testimonials }) => {
         {testimonials.map((testimonial) => (
           <div
             key={testimonial.id}
-            className="bg-gray-800 rounded-lg shadow-lg p-6 transition-transform duration-300 hover:scale-105"
+            className="bg-gray-800 rounded-lg shadow-lg p-6 transition-transform duration-300 hover:scale-105 hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]"
           >
             <p className="text-gray-400 italic mb-4">"{testimonial.message}"</p>
             <h3 className="text-lg font-semibold">{testimonial.name}</h3>
