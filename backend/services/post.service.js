@@ -83,7 +83,11 @@ const getLatestPosts = asyncHandler(async (req, res) => {
 const getPostById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate({
+      path: 'authorId',
+      model: 'User',
+      select: 'username',
+    });
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
