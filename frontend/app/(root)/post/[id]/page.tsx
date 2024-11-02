@@ -5,6 +5,9 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import moment from 'moment';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:5000');
 
 const PostDetails = (props: any) => {
   const { params } = props;
@@ -32,7 +35,7 @@ const PostDetails = (props: any) => {
 
       fetchUserInfo();
     }
-  }, []);
+  }, [post]);
 
   const fetchPost = async () => {
     try {
@@ -68,6 +71,16 @@ const PostDetails = (props: any) => {
     fetchComments();
   }, [post]);
 
+  useEffect(() => {
+    socket.on('newComment', (comment) => {
+      setComments((prevComments) => [...prevComments, comment]);
+    });
+
+    return () => {
+      socket.off('newComment');
+    };
+  }, []);
+
   const addComment = async () => {
     const comment = document.getElementById('comment') as HTMLTextAreaElement;
     if (!comment.value) return;
@@ -87,6 +100,7 @@ const PostDetails = (props: any) => {
 
       const data = await response.json();
       setComments([...comments, data]);
+      socket.emit('newComment', data);
       comment.value = '';
     } catch (error) {
       console.error(error);
