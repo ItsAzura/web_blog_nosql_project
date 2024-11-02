@@ -26,7 +26,6 @@ const PostDetails = (props: any) => {
           const response = await axios.get<IUser>(
             `http://localhost:5000/api/users/profile/${decodedToken.userId}`
           );
-
           setUser(response.data);
         } catch (error) {
           console.error(error);
@@ -35,41 +34,31 @@ const PostDetails = (props: any) => {
 
       fetchUserInfo();
     }
-  }, [post]);
-
-  const fetchPost = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/posts/${params.id}`
-      );
-      const data = await response.json();
-      setPost(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchPost();
-  }, [user]);
+    const fetchPostAndComments = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/posts/${params.id}`
+        );
+        const postData = await response.json();
+        setPost(postData);
+
+        const commentsResponse = await fetch(
+          `http://localhost:5000/api/comments/post/${params.id}`
+        );
+        const commentsData = await commentsResponse.json();
+        setComments(commentsData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPostAndComments();
+  }, [params.id]); // Chỉ chạy khi `params.id` thay đổi
 
   const placeholderAvatar = `https://avatar.iran.liara.run/public`;
-
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/comments/post/${params.id}`
-      );
-      const data = await response.json();
-      setComments(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchComments();
-  }, [post]);
 
   useEffect(() => {
     socket.on('newComment', (comment) => {
@@ -114,7 +103,9 @@ const PostDetails = (props: any) => {
           {/* Cover Image */}
           <div className="mb-12 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <img
-              src={post.coverImage || '/placeholder.jpg'}
+              src={
+                `http://localhost:5000${post.coverImage}` || '/placeholder.jpg'
+              }
               alt={post.title}
               className="w-full h-96 object-cover rounded-lg transition-transform duration-500 hover:scale-105"
             />
@@ -144,7 +135,7 @@ const PostDetails = (props: any) => {
 
           {/* Content */}
           <article className="prose prose-invert lg:prose-lg xl:prose-xl text-gray-300 max-w-none leading-relaxed border-t border-gray-700 pt-8 mb-12">
-            <p>{post.body}</p>
+            <div dangerouslySetInnerHTML={{ __html: post.body }}></div>
           </article>
 
           {/* Comments Section */}

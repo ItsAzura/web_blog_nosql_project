@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import http from 'http';
 import { Server } from 'socket.io';
 
@@ -55,6 +57,13 @@ io.on('connection', (socket) => {
     console.log('A user disconnected');
   });
 });
+
+// Lấy đường dẫn tới file hiện tại (__dirname cho ES Module)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Cấu hình phục vụ tệp tĩnh từ thư mục 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);

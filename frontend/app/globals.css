@@ -25,3 +25,28 @@ body {
     text-wrap: balance;
   }
 }
+
+.ql-container {
+  min-height: 200px;
+  background-color: rgba(41, 125, 204, 0.1);
+  color: #fff;
+}
+
+.ql-toolbar {
+  border-radius: 0.125rem;
+  border: none;
+  background-color: rgba(41, 125, 204, 0.2);
+}
+
+.ql-editor {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.ql-editor p {
+  margin: 0;
+}
+
+.ql-formats .ql-header .ql-fill {
+  color: #fff;
+}
