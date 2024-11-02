@@ -21,7 +21,11 @@ const getCommentsByPost = asyncHandler(async (req, res) => {
 
   try {
     await connectDB();
-    const comments = await Comment.find({ postId });
+    const comments = await Comment.find({ postId }).populate({
+      path: 'commenterId',
+      model: 'User',
+      select: 'username profilePicture',
+    });
     if (!comments) {
       return res.status(404).json({ message: 'No comments found' });
     }
@@ -36,13 +40,18 @@ const getCommentsByUser = asyncHandler(async (req, res) => {
 
   try {
     await connectDB();
-    const comments = await Comment.find({ commenterId });
+    const comments = await Comment.find({ commenterId }).populate({
+      path: 'commenterId',
+      model: 'User',
+      select: 'username',
+    });
     if (!comments) {
       return res.status(404).json({ message: 'No comments found' });
     }
     res.json(comments);
   } catch (error) {
     console.error(error);
+    res.status(500).send('Something broke!');
   }
 });
 

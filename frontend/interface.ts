@@ -1,14 +1,9 @@
-export interface IAuthor {
-  _id: string;
-  username: string;
-}
-
 export interface IPost {
   _id: string;
   id: string;
   title: string;
   body: string;
-  authorId: IAuthor;
+  authorId: IUser;
   categoryId: string;
   excerpt: string;
   coverImage: string;
@@ -29,6 +24,7 @@ export interface ICategory {
 }
 
 export interface IUser {
+  _id: string;
   username: string;
   email: string;
   profilePicture: string;
@@ -41,4 +37,12 @@ export interface TeamMember {
   role: string;
   imageUrl: string;
   description: string;
+}
+
+export interface IComment {
+  _id: string;
+  comment: string;
+  commenterId: IUser;
+  createdAt: string;
+  postId: string;
 }
