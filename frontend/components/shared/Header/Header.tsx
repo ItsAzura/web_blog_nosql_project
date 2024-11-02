@@ -6,31 +6,20 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-
-interface DecodedToken {
-  userId: string;
-  exp: number;
-  iat: number;
-}
-
-interface User {
-  _id: string;
-  username: string;
-  profilePicture?: string;
-}
+import { IDecodedToken, IUser } from '@/interface';
 
 const Header: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
 
     if (token) {
-      const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
+      const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
 
       const fetchUserInfo = async () => {
         try {
-          const response = await axios.get<User>(
+          const response = await axios.get<IUser>(
             `http://localhost:5000/api/users/profile/${decodedToken.userId}`
           );
 

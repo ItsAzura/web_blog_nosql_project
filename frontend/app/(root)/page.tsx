@@ -5,27 +5,16 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import { IPost } from '../../interface';
+import {} from '../../interface';
 import FeaturedPosts from '@/components/Home/FeaturedPosts';
 import LatestPosts from '@/components/Home/LatestPosts';
 import Testimonials from '@/components/Home/Testimonials';
 import CategoryList from '@/components/Home/CategoryList';
-
-interface DecodedToken {
-  userId: string;
-  exp: number;
-  iat: number;
-}
-
-interface User {
-  _id: string;
-  username: string;
-  profilePicture?: string;
-}
+import { IDecodedToken, IPost, IUser } from '@/interface';
 
 const mockPosts: IPost[] = [
   {
-    id: '1',
+    _id: '1',
     title: 'Exploring the Future of AI',
     excerpt:
       'Dive into the advancements in AI and what it holds for the future.',
@@ -33,13 +22,19 @@ const mockPosts: IPost[] = [
     author: 'John Doe',
     date: '2024-10-25',
     body: 'Full content of the post goes here...',
-    authorId: 'author1',
+    authorId: {
+      _id: 'author1',
+      username: 'John Doe',
+      email: 'john.doe@example.com',
+      profilePicture: '/john.jpg',
+      roleId: 'role1',
+    },
     categoryId: 'category1',
     liked: 0,
     createdAt: '2024-10-25T00:00:00Z',
   },
   {
-    id: '2',
+    _id: '2',
     title: 'The Importance of Mental Health',
     excerpt:
       'Mental health is essential for overall well-being. Learn more here.',
@@ -47,50 +42,36 @@ const mockPosts: IPost[] = [
     author: 'Jane Smith',
     date: '2024-10-20',
     body: 'Full content of the post goes here...',
-    authorId: 'author2',
+    authorId: {
+      _id: 'author2',
+      username: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      profilePicture: '/jane.jpg',
+      roleId: 'role2',
+    },
     categoryId: 'category2',
     liked: 0,
     createdAt: '2024-10-20T00:00:00Z',
   },
   {
-    id: '3',
+    _id: '3',
     title: 'Achieving Work-Life Balance',
     excerpt: 'Tips on how to maintain a healthy work-life balance.',
-    coverImage: 'work-life.jpg',
+    coverImage: '/work-life.jpg',
     author: 'Mary Johnson',
     date: '2024-10-18',
     body: 'Full content of the post goes here...',
-    authorId: 'author3',
+    authorId: {
+      _id: 'author3',
+      username: 'Mary Johnson',
+      email: 'mary.johnson@example.com',
+      profilePicture: '/mary.jpg',
+      roleId: 'role3',
+    },
     categoryId: 'category3',
     liked: 0,
     createdAt: '2024-10-18T00:00:00Z',
   },
-  // {
-  //   id: '4',
-  //   title: 'A Guide to Financial Independence',
-  //   excerpt: 'Take control of your finances and achieve independence.',
-  //   coverImage: 'finance.jpg',
-  //   author: 'Chris Lee',
-  //   date: '2024-10-15',
-  //   body: 'Full content of the post goes here...',
-  //   authorId: 'author4',
-  //   categoryId: 'category4',
-  //   liked: false,
-  //   createdAt: '2024-10-15T00:00:00Z',
-  // },
-  // {
-  //   id: '5',
-  //   title: 'Sustainable Living Tips',
-  //   excerpt: 'Discover ways to live a sustainable life for a greener future.',
-  //   coverImage: '/sustainability.jpg',
-  //   author: 'Pat Brown',
-  //   date: '2024-10-12',
-  //   body: 'Full content of the post goes here...',
-  //   authorId: 'author5',
-  //   categoryId: 'category5',
-  //   liked: false,
-  //   createdAt: '2024-10-12T00:00:00Z',
-  // },
 ];
 
 const mockCategories = [
@@ -127,17 +108,17 @@ const mockTestimonials = [
 ];
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
 
     if (token) {
-      const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
+      const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
 
       const fetchUserInfo = async () => {
         try {
-          const response = await axios.get<User>(
+          const response = await axios.get<IUser>(
             `http://localhost:5000/api/users/profile/${decodedToken.userId}`
           );
 

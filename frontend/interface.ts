@@ -1,6 +1,10 @@
+export interface IDecodedToken {
+  userId: string;
+  exp: number;
+  iat: number;
+}
 export interface IPost {
   _id: string;
-  id: string;
   title: string;
   body: string;
   authorId: IUser;
@@ -45,4 +49,11 @@ export interface IComment {
   commenterId: IUser;
   createdAt: string;
   postId: string;
+}
+
+export interface ITestimonial {
+  id: string;
+  name: string;
+  role: string;
+  message: string;
 }

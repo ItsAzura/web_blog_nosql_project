@@ -2,15 +2,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-
-interface User {
-  _id: string;
-  profilePicture?: string;
-  username: string;
-}
+import { IUser } from '@/interface';
 
 interface UserMenuProps {
-  user: User;
+  user: IUser;
   onLogout: () => void;
 }
 

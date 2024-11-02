@@ -1,16 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { IPost, IComment, IUser } from '@/interface';
+import { IPost, IComment, IUser, IDecodedToken } from '@/interface';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import moment from 'moment';
-
-interface DecodedToken {
-  userId: string;
-  exp: number;
-  iat: number;
-}
 
 const PostDetails = (props: any) => {
   const { params } = props;
@@ -22,7 +16,7 @@ const PostDetails = (props: any) => {
     const token = Cookies.get('blog_token');
 
     if (token) {
-      const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
+      const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
 
       const fetchUserInfo = async () => {
         try {
@@ -128,7 +122,7 @@ const PostDetails = (props: any) => {
                   {post.authorId.username}
                 </p>
                 <p className="text-gray-400 text-sm">
-                  {new Date(post.createdAt).toLocaleDateString()}
+                  {moment(post.createdAt).format('HH:mm DD-MM-YYYY ')}
                 </p>
               </div>
             </div>

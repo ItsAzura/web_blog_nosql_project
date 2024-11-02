@@ -1,15 +1,8 @@
 // components/Testimonials.tsx
 import React from 'react';
-
-interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  message: string;
-}
-
+import { ITestimonial } from '@/interface';
 interface TestimonialsProps {
-  testimonials: Testimonial[];
+  testimonials: ITestimonial[];
 }
 
 const Testimonials: React.FC<TestimonialsProps> = ({ testimonials }) => {

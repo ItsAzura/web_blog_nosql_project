@@ -16,7 +16,7 @@ const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-8">
         {posts.map((post) => (
           <div
-            key={post.id}
+            key={post._id}
             className="bg-gray-800 rounded-lg shadow-lg shadow-black/30 overflow-hidden transition-transform duration-300 hover:scale-105 group hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]"
           >
             {/* Image with overlay */}
