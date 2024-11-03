@@ -215,8 +215,11 @@ const deletePost = asyncHandler(async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    await post.remove();
-    res.json({ message: 'Post removed' });
+    const result = await post.deleteOne();
+    if (!result) {
+      return res.status(400).json({ message: 'Post not deleted' });
+    }
+    res.json({ message: 'Post deleted' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');

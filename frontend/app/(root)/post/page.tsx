@@ -145,8 +145,9 @@ const PostList = () => {
               <div className="relative h-52">
                 <img
                   src={
-                    `http://localhost:5000${post.coverImage}` ||
-                    '/placeholder.jpg'
+                    post.coverImage
+                      ? `http://localhost:5000${post.coverImage}`
+                      : '/placeholder.jpg'
                   }
                   alt={post.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

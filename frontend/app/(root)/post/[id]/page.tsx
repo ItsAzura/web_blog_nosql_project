@@ -6,6 +6,10 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import moment from 'moment';
 import { io } from 'socket.io-client';
+import Link from 'next/link';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ConfirmModal from '@/components/shared/ConfirmModal';
 
 const socket = io('http://localhost:5000');
 
@@ -14,6 +18,7 @@ const PostDetails = (props: any) => {
   const [post, setPost] = useState<IPost | null>(null);
   const [comments, setComments] = useState<IComment[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
@@ -96,15 +101,76 @@ const PostDetails = (props: any) => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete<{ message: string }>(
+        `http://localhost:5000/api/posts/${post?._id}`
+      );
+
+      if (response.status === 200) {
+        toast.success('Post deleted successfully');
+        setTimeout(() => {
+          window.location.href = '/post';
+        }, 2000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <section className="w-full min-h-screen px-6 sm:px-12 md:px-24 lg:px-36 xl:px-48 py-16  text-white">
+      <ToastContainer />
+      {user?._id === post?.authorId._id && (
+        <div className="mb-8 flex flex-row gap-2">
+          <Link href={`/post/edit/${post?._id}`}>
+            <button className="text-white flex flex-row justify-center items-center bg-blue-400  px-2 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="2rem"
+                height="2rem"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  d="m5 16l-1 4l4-1L19.586 7.414a2 2 0 0 0 0-2.828l-.172-.172a2 2 0 0 0-2.828 0zM15 6l3 3m-5 11h8"
+                />
+              </svg>
+              <span>Edit Post</span>
+            </button>
+          </Link>
+
+          <button
+            className="text-white flex flex-row justify-center items-center bg-red-400  px-2 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="2rem"
+              height="2rem"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+              />
+            </svg>
+            <span>Delete Post</span>
+          </button>
+        </div>
+      )}
       {post && (
         <>
           {/* Cover Image */}
           <div className="mb-12 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <img
               src={
-                `http://localhost:5000${post.coverImage}` || '/placeholder.jpg'
+                post.coverImage
+                  ? `http://localhost:5000${post.coverImage}`
+                  : '/placeholder.jpg'
               }
               alt={post.title}
               className="w-full h-96 object-cover rounded-lg transition-transform duration-500 hover:scale-105"
@@ -113,7 +179,7 @@ const PostDetails = (props: any) => {
 
           {/* Title and Author */}
           <div className="mb-8">
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 leading-tight text-blue-500 ">
               {post.title}
             </h1>
             <div className="flex items-center gap-4">
@@ -191,6 +257,16 @@ const PostDetails = (props: any) => {
           </div>
         </>
       )}
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this blog?"
+        onConfirm={() => {
+          handleDelete();
+          setIsModalOpen(false);
+        }}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };
