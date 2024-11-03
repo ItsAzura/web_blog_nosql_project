@@ -21,7 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000', //Cho fe kết nối
+    origin: 'http://localhost:3000', //Allow FE connection
     methods: ['GET', 'POST'],
   },
 });
@@ -43,26 +43,33 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send('Something broke!');
 });
 
-//sự kiện khi có người kết nối
+//Socket events for real-time comments
 io.on('connection', (socket) => {
   console.log('A user connected');
-  //sự kiện khi có người gửi comment
+
+  // Broadcast new comments
   socket.on('newComment', (comment) => {
-    //gửi comment đến tất cả người dùng
     io.emit('newComment', comment);
   });
 
-  //sự kiện khi có người gửi post
+  // Broadcast comment updates
+  socket.on('updateComment', (updatedComment) => {
+    io.emit('updateComment', updatedComment);
+  });
+
+  // Broadcast comment deletions
+  socket.on('deleteComment', (commentId) => {
+    io.emit('deleteComment', commentId);
+  });
+
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
 });
 
-// Lấy đường dẫn tới file hiện tại (__dirname cho ES Module)
+// Serve static files from the 'uploads' folder
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Cấu hình phục vụ tệp tĩnh từ thư mục 'uploads'
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 server.listen(port, () => {

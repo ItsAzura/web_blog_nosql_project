@@ -19,15 +19,14 @@ const PostDetails = (props: any) => {
   const [comments, setComments] = useState<IComment[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editingCommentText, setEditingCommentText] = useState<string>('');
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(
     null
   );
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState<string>('');
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
-
     if (token) {
       const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
 
@@ -66,17 +65,31 @@ const PostDetails = (props: any) => {
     };
 
     fetchPostAndComments();
-  }, [params.id]); // Chỉ chạy khi `params.id` thay đổi
-
-  const placeholderAvatar = `https://avatar.iran.liara.run/public`;
+  }, [params.id]);
 
   useEffect(() => {
     socket.on('newComment', (comment) => {
       setComments((prevComments) => [...prevComments, comment]);
     });
 
+    socket.on('updateComment', (updatedComment) => {
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === updatedComment._id ? updatedComment : comment
+        )
+      );
+    });
+
+    socket.on('deleteComment', (commentId) => {
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment._id !== commentId)
+      );
+    });
+
     return () => {
       socket.off('newComment');
+      socket.off('updateComment');
+      socket.off('deleteComment');
     };
   }, []);
 
@@ -87,9 +100,7 @@ const PostDetails = (props: any) => {
     try {
       const response = await fetch('http://localhost:5000/api/comments', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           comment: comment.value,
           postId: params.id,
@@ -106,23 +117,6 @@ const PostDetails = (props: any) => {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const response = await axios.delete<{ message: string }>(
-        `http://localhost:5000/api/posts/${post?._id}`
-      );
-
-      if (response.status === 200) {
-        toast.success('Post deleted successfully');
-        setTimeout(() => {
-          window.location.href = '/post';
-        }, 2000);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleEditClick = (comment: IComment) => {
     setEditingCommentId(comment._id);
     setEditingCommentText(comment.comment);
@@ -132,19 +126,20 @@ const PostDetails = (props: any) => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/comments/${commentId}`,
-        {
-          comment: editingCommentText,
-        }
+        { comment: editingCommentText }
       );
 
       if (response.status === 200) {
+        const updatedComment = {
+          ...response.data,
+          comment: editingCommentText,
+        };
         setComments((prevComments) =>
           prevComments.map((comment) =>
-            comment._id === commentId
-              ? { ...comment, comment: editingCommentText }
-              : comment
+            comment._id === commentId ? updatedComment : comment
           )
         );
+        socket.emit('updateComment', updatedComment);
         setEditingCommentId(null);
         toast.success('Comment updated successfully!');
       }
@@ -160,7 +155,10 @@ const PostDetails = (props: any) => {
         `http://localhost:5000/api/comments/${commentId}`
       );
       if (response.status === 200) {
-        setComments(comments.filter((comment) => comment._id !== commentId));
+        setComments((prevComments) =>
+          prevComments.filter((comment) => comment._id !== commentId)
+        );
+        socket.emit('deleteComment', commentId);
         toast.success('Comment deleted successfully!');
       }
     } catch (error) {
@@ -176,6 +174,8 @@ const PostDetails = (props: any) => {
     }
     setIsModalOpen(false);
   };
+
+  const placeholderAvatar = 'https://avatar.iran.liara.run/public';
 
   return (
     <section className="w-full min-h-screen px-6 sm:px-12 md:px-24 lg:px-36 xl:px-48 py-16  text-white">
@@ -194,7 +194,7 @@ const PostDetails = (props: any) => {
                   fill="none"
                   stroke="currentColor"
                   stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinejoin="round"
                   strokeWidth="1.5"
                   d="m5 16l-1 4l4-1L19.586 7.414a2 2 0 0 0 0-2.828l-.172-.172a2 2 0 0 0-2.828 0zM15 6l3 3m-5 11h8"
                 />
@@ -346,7 +346,20 @@ const PostDetails = (props: any) => {
                         className="bg-blue-400 text-white px-2 py-1 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
                         onClick={() => handleEditClick(comment)}
                       >
-                        Edit
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="1.5rem"
+                          height="1.5rem"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            strokeLinejoin="round"
+                            d="m5 16l-1 4l4-1L19.586 7.414a2 2 0 0 0 0-2.828l-.172-.172a2 2 0 0 0-2.828 0zM15 6l3 3m-5 11h8"
+                          />
+                        </svg>
                       </button>
                       <button
                         className="bg-red-400 text-white px-2 py-1 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
@@ -355,7 +368,25 @@ const PostDetails = (props: any) => {
                           setIsModalOpen(true);
                         }}
                       >
-                        Delete
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="1.5rem"
+                          height="1.5rem"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="currentColor"
+                            d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z"
+                          />
+                          <path
+                            fill="currentColor"
+                            d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76"
+                          />
+                        </svg>
                       </button>
                     </div>
                   )}
@@ -365,14 +396,12 @@ const PostDetails = (props: any) => {
           </div>
         </>
       )}
+
       <ConfirmModal
         isOpen={isModalOpen}
         title="Confirm Delete"
-        message="Are you sure you want to delete this blog?"
-        onConfirm={() => {
-          handleDelete();
-          setIsModalOpen(false);
-        }}
+        message="Are you sure you want to delete this comment?"
+        onConfirm={handleConfirmDeleteComment}
         onCancel={() => setIsModalOpen(false)}
       />
 
