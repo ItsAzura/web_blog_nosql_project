@@ -19,6 +19,11 @@ const PostDetails = (props: any) => {
   const [comments, setComments] = useState<IComment[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState<string>('');
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
@@ -117,6 +122,61 @@ const PostDetails = (props: any) => {
       console.error(error);
     }
   };
+
+  const handleEditClick = (comment: IComment) => {
+    setEditingCommentId(comment._id);
+    setEditingCommentText(comment.comment);
+  };
+
+  const saveEditedComment = async (commentId: string) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/comments/${commentId}`,
+        {
+          comment: editingCommentText,
+        }
+      );
+
+      if (response.status === 200) {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === commentId
+              ? { ...comment, comment: editingCommentText }
+              : comment
+          )
+        );
+        setEditingCommentId(null);
+        toast.success('Comment updated successfully!');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update comment.');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/comments/${commentId}`
+      );
+      if (response.status === 200) {
+        setComments(comments.filter((comment) => comment._id !== commentId));
+        toast.success('Comment deleted successfully!');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete comment.');
+    }
+  };
+
+  const handleConfirmDeleteComment = () => {
+    if (deletingCommentId) {
+      handleDeleteComment(deletingCommentId);
+      setDeletingCommentId(null);
+    }
+    setIsModalOpen(false);
+  };
+
   return (
     <section className="w-full min-h-screen px-6 sm:px-12 md:px-24 lg:px-36 xl:px-48 py-16  text-white">
       <ToastContainer />
@@ -250,7 +310,55 @@ const PostDetails = (props: any) => {
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-300">{comment.comment}</p>
+
+                  {/* Render either textarea for editing or normal comment text */}
+                  {editingCommentId === comment._id ? (
+                    <div>
+                      <textarea
+                        className="w-full p-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        value={editingCommentText}
+                        onChange={(e) => setEditingCommentText(e.target.value)}
+                        rows={3}
+                      />
+                      <div className="flex justify-end mt-2">
+                        <button
+                          className="bg-blue-400 text-gray-900 px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
+                          onClick={() => saveEditedComment(comment._id)}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="ml-2 text-red-400"
+                          onClick={() => setEditingCommentId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-300">{comment.comment}</p>
+                  )}
+
+                  {/* Show edit button only for the user who created the comment */}
+                  {user?._id === comment.commenterId._id && (
+                    <div className="mt-4 flex justify-end gap-2">
+                      <button
+                        className="bg-blue-400 text-white px-2 py-1 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
+                        onClick={() => handleEditClick(comment)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="bg-red-400 text-white px-2 py-1 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
+                        onClick={() => {
+                          setDeletingCommentId(comment._id);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -265,6 +373,14 @@ const PostDetails = (props: any) => {
           handleDelete();
           setIsModalOpen(false);
         }}
+        onCancel={() => setIsModalOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this comment?"
+        onConfirm={handleConfirmDeleteComment}
         onCancel={() => setIsModalOpen(false)}
       />
     </section>
