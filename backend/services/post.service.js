@@ -83,11 +83,17 @@ const getLatestPosts = asyncHandler(async (req, res) => {
 const getPostById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const post = await Post.findById(req.params.id).populate({
-      path: 'authorId',
-      model: 'User',
-      select: 'username',
-    });
+    const post = await Post.findById(req.params.id)
+      .populate({
+        path: 'authorId',
+        model: 'User',
+        select: 'username',
+      })
+      .populate({
+        path: 'categoryId',
+        model: 'Category',
+        select: 'name',
+      });
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
@@ -163,12 +169,6 @@ const createPost = asyncHandler(async (req, res) => {
 const updatePost = asyncHandler(async (req, res) => {
   const { title, body, authorId, categoryName } = req.body;
 
-  if (!title || !body || !authorId || !categoryName) {
-    return res
-      .status(400)
-      .json({ message: 'Title, body, authorId, and categoryId are required' });
-  }
-
   try {
     await connectDB();
 
@@ -178,12 +178,15 @@ const updatePost = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: 'Category not found' });
     }
 
-    let coverImage = req.file ? `/uploads/${req.file.filename}` : null;
-
     const post = await Post.findById(req.params.id);
 
     if (!post) {
       return res.status(400).json({ message: 'Post not found' });
+    }
+
+    let coverImage = post.coverImage;
+    if (req.file) {
+      coverImage = `/uploads/${req.file.filename}`;
     }
 
     post.title = title;

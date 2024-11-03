@@ -26,7 +26,7 @@ router.route('/latest').get(getLatestPosts, authenticate);
 router
   .route('/:id')
   .get(getPostById, authenticate)
-  .put(authenticate, updatePost, upload.single('coverImage'))
+  .put(upload.single('coverImage'), updatePost)
   .delete(deletePost);
 
 router.route('/user/:userId').get(getPostsByUser);

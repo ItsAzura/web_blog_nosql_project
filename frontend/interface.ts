@@ -8,7 +8,7 @@ export interface IPost {
   title: string;
   body: string;
   authorId: IUser;
-  categoryId: string;
+  categoryId: ICategory;
   excerpt: string;
   coverImage: string;
   liked: number;
