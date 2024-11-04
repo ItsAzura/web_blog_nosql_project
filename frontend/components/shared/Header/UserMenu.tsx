@@ -35,12 +35,24 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
       </button>
 
       {isOpen && (
-        <div className="z-10 absolute right-0 mt-40 w-48 bg-gray-900 rounded-lg shadow-lg py-2 duration-300 ease-out transform origin-top-right scale-95">
+        <div className="z-10 absolute right-0 mt-60 w-48 bg-gray-900 rounded-lg shadow-lg py-2 duration-300 ease-out transform origin-top-right scale-95">
           <Link
             href={`/profile/${user._id}`}
             className="block px-4 py-2 text-gray-300 hover:bg-gray-800 hover:text-white duration-300"
           >
             Profile
+          </Link>
+          <Link
+            href={`/workspace/${user._id}`}
+            className="block px-4 py-2 text-gray-300 hover:bg-gray-800 hover:text-white duration-300"
+          >
+            Work Space
+          </Link>
+          <Link
+            href={`/favorite/${user._id}`}
+            className="block px-4 py-2 text-gray-300 hover:bg-gray-800 hover:text-white duration-300"
+          >
+            Favorite
           </Link>
           <button
             onClick={onLogout}

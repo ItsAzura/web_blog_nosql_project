@@ -2,11 +2,12 @@ import asyncHandler from '../middlewares/asyncHandler.js';
 import connectDB from '../db.js';
 import Post from '../models/posts.js';
 import Category from '../models/categories.js';
+import mongoose from 'mongoose';
 
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const { title, categoryId, page, limit = 10 } = req.query;
+    const { title, categoryId, page, limit = 9 } = req.query;
 
     if (!page) {
       return res.status(400).json({ message: 'Page is required in query' });
@@ -107,14 +108,81 @@ const getPostById = asyncHandler(async (req, res) => {
 const getPostsByUser = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const posts = await Post.find({ user: req.params.userId });
-    if (!posts) {
-      return res.status(404).json({ message: 'No posts found' });
+    const { title, categoryId, page = 1, limit = 9 } = req.query;
+    const MAX_LIMIT = 100;
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    if (!pageNum || pageNum <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Page must be a positive number',
+      });
     }
-    res.json(posts);
+
+    if (!limitNum || limitNum <= 0 || limitNum > MAX_LIMIT) {
+      return res.status(400).json({
+        success: false,
+        message: `Limit must be between 1 and ${MAX_LIMIT}`,
+      });
+    }
+
+    const authorId = req.params.userId;
+    // Tạo filter object
+    const filter = { authorId: authorId };
+
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
+    }
+
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
+
+    const skip = (pageNum - 1) * limitNum;
+
+    // Thực hiện 2 queries song song để tăng tốc độ
+    const [posts, totalPosts] = await Promise.all([
+      Post.find(filter)
+        .select('title content createdAt imageUrl description')
+        .populate({
+          path: 'authorId',
+          model: 'User',
+          select: 'username',
+        })
+        .skip(skip)
+        .limit(limitNum)
+        .lean()
+        .exec(),
+      Post.countDocuments(filter),
+    ]);
+
+    if (posts.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No posts found',
+      });
+    }
+
+    const totalPages = Math.ceil(totalPosts / limitNum);
+
+    return res.json({
+      success: true,
+      posts,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        totalPosts,
+        totalPages,
+      },
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Something broke!');
+    console.error('GetPostsByUser Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 });
 

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { IPost, ICategory } from '@/interface';
 import Link from 'next/link';
-const PostList = () => {
+const PersonalWorkSpace = (props: any) => {
+  const { params } = props;
   const [categories, setCategories] = useState<ICategory[]>([]);
   const fetchCategories = async () => {
     try {
@@ -36,10 +37,12 @@ const PostList = () => {
   const fetchPosts = async () => {
     try {
       const response = await fetch(`
-            http://localhost:5000/api/posts?${new URLSearchParams({
-              ...filter,
-              page: filter.page.toString(),
-            })}
+            http://localhost:5000/api/posts/user/${
+              params.id
+            }?${new URLSearchParams({
+        ...filter,
+        page: filter.page.toString(),
+      })}
             `);
 
       const data = await response.json();
@@ -96,7 +99,7 @@ const PostList = () => {
     <div className="mx-20 m-5">
       <div className="flex flex-row justify-between items-center">
         <h1 className="text-5xl pt-4  font-semibold text-white py-4 filter drop-shadow-[0px_0px_6px_rgba(41,125,204,1)] transition-shadow">
-          All Blog
+          Your Work Space
         </h1>
         <Link href="/post/create">
           <button className="my-4 p-3 flex flex-row items-center gap-2 bg-[#0b1c37] text-white  rounded-lg hover:shadow-lg hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]">
@@ -238,4 +241,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default PersonalWorkSpace;
