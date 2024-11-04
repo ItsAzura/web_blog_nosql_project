@@ -10,7 +10,7 @@ import FeaturedPosts from '@/components/Home/FeaturedPosts';
 import LatestPosts from '@/components/Home/LatestPosts';
 import Testimonials from '@/components/Home/Testimonials';
 import CategoryList from '@/components/Home/CategoryList';
-import { IDecodedToken, IPost, IUser } from '@/interface';
+import { IDecodedToken, IPost, IUser, ICategory } from '@/interface';
 
 const mockPosts: IPost[] = [
   {
@@ -30,7 +30,7 @@ const mockPosts: IPost[] = [
       roleId: 'role1',
     },
     categoryId: {
-      id: 'category1',
+      _id: 'category1',
       name: 'Technology',
     },
     liked: 0,
@@ -53,7 +53,7 @@ const mockPosts: IPost[] = [
       roleId: 'role2',
     },
     categoryId: {
-      id: 'category2',
+      _id: 'category2',
       name: 'Health',
     },
     liked: 0,
@@ -75,7 +75,7 @@ const mockPosts: IPost[] = [
       roleId: 'role3',
     },
     categoryId: {
-      id: 'category3',
+      _id: 'category3',
       name: 'Lifestyle',
     },
     liked: 0,
@@ -84,12 +84,12 @@ const mockPosts: IPost[] = [
 ];
 
 const mockCategories = [
-  { id: '1', name: 'Technology', postCount: 12 },
-  { id: '2', name: 'Design', postCount: 8 },
-  { id: '3', name: 'Health', postCount: 15 },
-  { id: '4', name: 'Lifestyle', postCount: 7 },
-  { id: '5', name: 'Travel', postCount: 5 },
-  { id: '6', name: 'A.I', postCount: 10 },
+  { _id: '1', name: 'Technology', postCount: 12 },
+  { _id: '2', name: 'Design', postCount: 8 },
+  { _id: '3', name: 'Health', postCount: 15 },
+  { _id: '4', name: 'Lifestyle', postCount: 7 },
+  { _id: '5', name: 'Travel', postCount: 5 },
+  { _id: '6', name: 'A.I', postCount: 10 },
 ];
 
 const mockTestimonials = [
@@ -141,6 +141,21 @@ export default function Home() {
     }
   }, []);
 
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/categories');
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [user]);
+
   return (
     <>
       <section className="py-14 ml-4">
@@ -179,7 +194,7 @@ export default function Home() {
 
       <FeaturedPosts posts={mockPosts} />
 
-      <CategoryList categories={mockCategories} />
+      <CategoryList categories={categories} />
 
       <LatestPosts posts={mockPosts} />
 

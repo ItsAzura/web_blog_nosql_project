@@ -124,8 +124,8 @@ const PostList = () => {
           </option>
           {categories.map((category) => (
             <option
-              key={category.id}
-              value={category.id}
+              key={category._id}
+              value={category.name}
               className="bg-[#0b1c37] text-[#e7e7ea]"
             >
               {category.name}

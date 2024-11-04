@@ -23,7 +23,7 @@ export interface IRole {
 }
 
 export interface ICategory {
-  id: string;
+  _id: string;
   name: string;
 }
 
