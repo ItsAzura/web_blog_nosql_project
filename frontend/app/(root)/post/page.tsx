@@ -43,7 +43,8 @@ const PostList = () => {
             `);
 
       const data = await response.json();
-      setPosts({ totalPage: data.totalPage, data: data.posts });
+      console.log(data);
+      setPosts({ totalPage: data.pagination.totalPages, data: data.posts });
     } catch (error) {
       console.error(error);
     }
@@ -89,8 +90,6 @@ const PostList = () => {
   };
 
   const totalPages = posts.totalPage || 1;
-
-  console.log(posts);
 
   return (
     <div className="mx-20 m-5">

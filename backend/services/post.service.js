@@ -56,7 +56,14 @@ const getAllPosts = asyncHandler(async (req, res) => {
 const getTopLikedPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const posts = await Post.find().sort({ liked: -1 }).limit(5);
+    const posts = await Post.find()
+      .populate({
+        path: 'authorId',
+        model: 'User',
+        select: 'username',
+      })
+      .sort({ liked: -1 })
+      .limit(3);
     if (!posts) {
       return res.status(404).json({ message: 'No posts found' });
     }
@@ -70,7 +77,14 @@ const getTopLikedPosts = asyncHandler(async (req, res) => {
 const getLatestPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const posts = await Post.find().sort({ createdAt: -1 }).limit(8);
+    const posts = await Post.find()
+      .populate({
+        path: 'authorId',
+        model: 'User',
+        select: 'username',
+      })
+      .sort({ createdAt: -1 })
+      .limit(3);
     if (!posts) {
       return res.status(404).json({ message: 'No posts found' });
     }

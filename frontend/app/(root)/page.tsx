@@ -156,6 +156,33 @@ export default function Home() {
     fetchCategories();
   }, [user]);
 
+  const [likedPosts, setLikedPosts] = useState<IPost[]>([]);
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/posts/top-liked');
+      const data = await response.json();
+      setLikedPosts(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const [latestPosts, setLatestPosts] = useState<IPost[]>([]);
+  const fetchLatestPosts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/posts/latest');
+      const data = await response.json();
+      setLatestPosts(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    fetchLatestPosts();
+  }, [categories]);
+
   return (
     <>
       <section className="py-14 ml-4">
@@ -192,11 +219,11 @@ export default function Home() {
         </div>
       </section>
 
-      <FeaturedPosts posts={mockPosts} />
+      <FeaturedPosts posts={likedPosts} />
 
       <CategoryList categories={categories} />
 
-      <LatestPosts posts={mockPosts} />
+      <LatestPosts posts={latestPosts} />
 
       <Testimonials testimonials={mockTestimonials} />
     </>

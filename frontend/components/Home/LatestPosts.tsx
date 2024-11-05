@@ -22,7 +22,11 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
             {/* Image with overlay */}
             <div className="relative h-52">
               <img
-                src={post.coverImage}
+                src={
+                  post.coverImage
+                    ? `http://localhost:5000${post.coverImage}`
+                    : '/placeholder.jpg'
+                }
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -37,13 +41,15 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
               <p className="text-gray-400 text-sm mb-6">{post.excerpt}</p>
 
               <div className="flex items-center justify-between text-gray-500 text-xs mb-6">
-                <span>By {post.author}</span>
-                <span>{new Date(post.date).toLocaleDateString()}</span>
+                <span>By {post.authorId.username}</span>
+                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
               </div>
 
-              <button className="w-full py-2 px-4 rounded border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-300">
-                Read More
-              </button>
+              <Link href={`/post/${post._id}`}>
+                <button className="w-full py-2 px-4 rounded border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-300">
+                  Read More
+                </button>
+              </Link>
             </div>
           </div>
         ))}

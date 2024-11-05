@@ -43,7 +43,7 @@ const Header: React.FC = () => {
         'http://localhost:5000/api/users/logout'
       );
 
-      if (response.data.message === 'Logout successful') {
+      if (response.data.message === 'User logged out successfully') {
         Cookies.remove('blog_token');
         setUser(null);
         window.location.href = '/login';
