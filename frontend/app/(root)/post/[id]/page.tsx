@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { IPost, IComment, IUser, IDecodedToken } from '@/interface';
+import { IPost, IComment, IUser, IDecodedToken, IFavorite } from '@/interface';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -25,6 +25,7 @@ const PostDetails = (props: any) => {
   );
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>('');
+  const [isFavorite, setIsFavorite] = useState<boolean>();
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
@@ -181,11 +182,93 @@ const PostDetails = (props: any) => {
     setIsModalOpen(false);
   };
 
-  const placeholderAvatar = 'https://avatar.iran.liara.run/public';
+  const fetchFavoriteStatus = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/favorites/user/${user?._id}`
+      );
+      console.log('response: ', response.data);
+      response.data.map((favorite: IFavorite) => {
+        if (favorite.postId === post?._id) {
+          setIsFavorite(true);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  useEffect(() => {
+    if (user?._id) {
+      fetchFavoriteStatus();
+    }
+  }, [user?._id, post?._id]);
+
+  console.log('isFavorite: ', isFavorite);
+
+  const setFavorite = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/favorites', {
+        userId: user?._id,
+        postId: post?._id,
+      });
+      setIsFavorite(true);
+      toast.success('Added to favorites!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to add to favorites.');
+    }
+  };
+
+  const removeFavorite = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/favorites`, {
+        data: {
+          userId: user?._id,
+          postId: post?._id,
+        },
+      });
+      setIsFavorite(false);
+      toast.success('Removed from favorites!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to remove from favorites.');
+    }
+  };
   return (
     <section className="w-full min-h-screen px-6 sm:px-12 md:px-24 lg:px-36 xl:px-48 py-16  text-white">
       <ToastContainer />
+      <div className="flex justify-end mb-8">
+        {isFavorite ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="2rem"
+            height="2rem"
+            viewBox="0 0 24 24"
+            className="text-red-500 cursor-pointer"
+            onClick={removeFavorite}
+          >
+            <path
+              fill="currentColor"
+              d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="2rem"
+            height="2rem"
+            viewBox="0 0 24 24"
+            className="cursor-pointer"
+            onClick={setFavorite}
+          >
+            <path
+              fill="currentColor"
+              d="m12 21l-1.45-1.3q-2.525-2.275-4.175-3.925T3.75 12.812T2.388 10.4T2 8.15Q2 5.8 3.575 4.225T7.5 2.65q1.3 0 2.475.55T12 4.75q.85-1 2.025-1.55t2.475-.55q2.35 0 3.925 1.575T22 8.15q0 1.15-.387 2.25t-1.363 2.412t-2.625 2.963T13.45 19.7z"
+            />
+          </svg>
+        )}
+      </div>
       {user?._id === post?.authorId._id && (
         <div className="mb-8 flex flex-row gap-2">
           <Link href={`/post/edit/${post?._id}`}>

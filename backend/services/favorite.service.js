@@ -1,6 +1,7 @@
 import asyncHandler from '../middlewares/asyncHandler.js';
 import connectDB from '../db.js';
 import Favorite from '../models/favorites.js';
+import Post from '../models/posts.js';
 
 const getAllFavorites = asyncHandler(async (req, res) => {
   try {
@@ -21,7 +22,7 @@ const getFavoritesByUser = asyncHandler(async (req, res) => {
 
   try {
     await connectDB();
-    const favorites = await Favorite.find({ user: userId });
+    const favorites = await Favorite.find({ userId: userId });
     if (!favorites) {
       return res.status(404).json({ message: 'No favorites found' });
     }
@@ -35,7 +36,7 @@ const getFavoritesByPost = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   try {
     await connectDB();
-    const favorites = await Favorite.find({ post: postId });
+    const favorites = await Favorite.find({ postId: postId });
     if (!favorites) {
       return res.status(404).json({ message: 'No favorites found' });
     }
@@ -55,16 +56,23 @@ const createFavorite = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     const existingFavorite = await Favorite.findOne({
-      user: userId,
-      post: postId,
+      userId: userId,
+      postId: postId,
     });
     if (existingFavorite) {
       return res.status(400).json({ message: 'Favorite already exists' });
     }
+    const userPost = await Post.findById(postId);
+
+    if (postId === userPost._id) {
+      return res
+        .status(400)
+        .json({ message: 'You cannot favorite your own post' });
+    }
 
     const favorite = new Favorite({
-      user: userId,
-      post: postId,
+      userId: userId,
+      postId: postId,
     });
 
     if (!favorite) {
@@ -80,11 +88,14 @@ const createFavorite = asyncHandler(async (req, res) => {
 });
 
 const deleteFavorite = asyncHandler(async (req, res) => {
-  const favoriteId = req.params.id;
+  const { userId, postId } = req.body;
 
   try {
     await connectDB();
-    const result = await Favorite.findByIdAndDelete(favoriteId);
+    const result = await Favorite.findOneAndDelete({
+      userId: userId,
+      postId: postId,
+    });
 
     if (!result) {
       return res.status(404).json({ message: 'Favorite not found' });

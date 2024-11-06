@@ -57,3 +57,9 @@ export interface ITestimonial {
   role: string;
   message: string;
 }
+
+export interface IFavorite {
+  _id: string;
+  userId: string;
+  postId: string;
+}

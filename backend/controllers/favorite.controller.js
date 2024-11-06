@@ -19,6 +19,6 @@ router.route('/user/:userId').get(getFavoritesByUser, authenticate);
 
 router.route('/post/:postId').get(getFavoritesByPost, authenticate);
 
-router.route('/:id').delete(deleteFavorite, authenticate);
+router.route('/').delete(deleteFavorite, authenticate);
 
 export default router;
