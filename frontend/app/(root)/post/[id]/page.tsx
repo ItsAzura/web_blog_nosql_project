@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ConfirmModal from '@/components/shared/ConfirmModal';
+import Image from 'next/image';
 
 const socket = io('http://localhost:5000');
 
@@ -69,7 +70,12 @@ const PostDetails = (props: any) => {
 
   useEffect(() => {
     socket.on('newComment', (comment) => {
-      setComments((prevComments) => [...prevComments, comment]);
+      setComments((prevComments) => {
+        if (!prevComments.find((c) => c._id === comment._id)) {
+          return [...prevComments, comment];
+        }
+        return prevComments;
+      });
     });
 
     socket.on('updateComment', (updatedComment) => {
@@ -226,7 +232,7 @@ const PostDetails = (props: any) => {
         <>
           {/* Cover Image */}
           <div className="mb-12 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <img
+            <Image
               src={
                 post.coverImage
                   ? `http://localhost:5000${post.coverImage}`
@@ -234,6 +240,8 @@ const PostDetails = (props: any) => {
               }
               alt={post.title}
               className="w-full h-96 object-cover rounded-lg transition-transform duration-500 hover:scale-105"
+              width={1200}
+              height={500}
             />
           </div>
 
@@ -244,7 +252,7 @@ const PostDetails = (props: any) => {
             </h1>
             <div className="flex items-center gap-4">
               <img
-                src={placeholderAvatar}
+                src={`https://ui-avatars.com/api/?name=${post.authorId.username}&background=random&color=fff`}
                 alt={post.authorId.username}
                 className="w-12 h-12 rounded-full object-cover border-2 border-blue-400"
               />
@@ -296,7 +304,8 @@ const PostDetails = (props: any) => {
                   <div className="flex items-center mb-4">
                     <img
                       src={
-                        comment.commenterId.profilePicture || placeholderAvatar
+                        comment.commenterId.profilePicture ||
+                        `https://ui-avatars.com/api/?name=${comment.commenterId.username}&background=random&color=fff`
                       }
                       alt={comment.commenterId.username}
                       className="w-10 h-10 rounded-full mr-4"
@@ -396,14 +405,6 @@ const PostDetails = (props: any) => {
           </div>
         </>
       )}
-
-      <ConfirmModal
-        isOpen={isModalOpen}
-        title="Confirm Delete"
-        message="Are you sure you want to delete this comment?"
-        onConfirm={handleConfirmDeleteComment}
-        onCancel={() => setIsModalOpen(false)}
-      />
 
       <ConfirmModal
         isOpen={isModalOpen}

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { IPost, ICategory } from '@/interface';
 import Link from 'next/link';
+import Image from 'next/image';
 const PersonalWorkSpace = (props: any) => {
   const { params } = props;
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -146,7 +147,7 @@ const PersonalWorkSpace = (props: any) => {
             >
               {/* Image with overlay */}
               <div className="relative h-52">
-                <img
+                <Image
                   src={
                     post.coverImage
                       ? `http://localhost:5000${post.coverImage}`
@@ -154,6 +155,8 @@ const PersonalWorkSpace = (props: any) => {
                   }
                   alt={post.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  width={300}
+                  height={200}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50 group-hover:opacity-60 transition-opacity duration-300"></div>
               </div>

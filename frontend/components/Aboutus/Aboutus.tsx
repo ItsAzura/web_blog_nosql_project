@@ -1,6 +1,7 @@
 // components/AboutUs.tsx
 import React from 'react';
 import { TeamMember } from '../../interface';
+import Image from 'next/image';
 
 interface AboutUsProps {
   members: TeamMember[];
@@ -26,10 +27,12 @@ const AboutUsComponent: React.FC<AboutUsProps> = ({ members }) => {
             className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 group hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]"
           >
             <div className="relative h-48">
-              <img
+              <Image
                 src={member.imageUrl}
                 alt={member.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                width={300}
+                height={200}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-70"></div>
             </div>

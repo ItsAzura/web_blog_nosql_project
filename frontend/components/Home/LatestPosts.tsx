@@ -1,6 +1,7 @@
 import React from 'react';
 import { IPost } from '../../interface';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface FeaturedPostsProps {
   posts: IPost[];
@@ -21,7 +22,7 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
           >
             {/* Image with overlay */}
             <div className="relative h-52">
-              <img
+              <Image
                 src={
                   post.coverImage
                     ? `http://localhost:5000${post.coverImage}`
@@ -29,6 +30,8 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
                 }
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                width={300}
+                height={200}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50 group-hover:opacity-60 transition-opacity duration-300"></div>
             </div>
