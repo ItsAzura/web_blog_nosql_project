@@ -127,18 +127,16 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
   try {
     await connectDB();
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId).populate({
+      path: 'roleId',
+      model: 'Role',
+      select: 'name',
+    });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      role: user.roleId,
-      profilePicture: user.profilePicture,
-    });
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Something broke!' });
@@ -150,32 +148,35 @@ const updateProfile = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    let profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
+    await connectDB();
+    const user = await User.findById(userId);
 
-    const updateUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        username,
-        email,
-        password,
-        profilePicture,
-        updatedAt: Date.now(),
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    if (!updateUser) {
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    let profilePicture = user.profilePicture;
+    if (req.file) {
+      profilePicture = `/uploads/${req.file.filename}`;
+    }
+
+    // Kiểm tra xem user có nhập password mới không
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    user.username = username;
+    user.email = email;
+    user.profilePicture = profilePicture;
+
+    await user.save();
+
     res.status(200).json({
-      _id: updateUser._id,
-      username: updateUser.username,
-      email: updateUser.email,
-      profilePicture: updateUser.profilePicture,
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      profilePicture: user.profilePicture,
     });
   } catch (error) {
     console.error(error);

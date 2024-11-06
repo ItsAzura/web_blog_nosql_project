@@ -335,7 +335,11 @@ const PostDetails = (props: any) => {
             </h1>
             <div className="flex items-center gap-4">
               <img
-                src={`https://ui-avatars.com/api/?name=${post.authorId.username}&background=random&color=fff`}
+                src={
+                  post.authorId.profilePicture
+                    ? `http://localhost:5000${post.authorId.profilePicture}`
+                    : `https://ui-avatars.com/api/?name=${post.authorId.username}&background=random&color=fff`
+                }
                 alt={post.authorId.username}
                 className="w-12 h-12 rounded-full object-cover border-2 border-blue-400"
               />
@@ -387,8 +391,9 @@ const PostDetails = (props: any) => {
                   <div className="flex items-center mb-4">
                     <img
                       src={
-                        comment.commenterId.profilePicture ||
-                        `https://ui-avatars.com/api/?name=${comment.commenterId.username}&background=random&color=fff`
+                        comment.commenterId.profilePicture
+                          ? `http://localhost:5000${comment.commenterId.profilePicture}`
+                          : `https://ui-avatars.com/api/?name=${comment.commenterId.username}&background=random&color=fff`
                       }
                       alt={comment.commenterId.username}
                       className="w-10 h-10 rounded-full mr-4"
@@ -496,6 +501,15 @@ const PostDetails = (props: any) => {
         onConfirm={handleConfirmDeleteComment}
         onCancel={() => setIsModalOpen(false)}
       />
+
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-24 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        <div className="absolute top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        <div className="absolute mt-[300px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        <div className="absolute mt-[700px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        <div className="absolute mt-[1000px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        <div className="absolute mt-[1400px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+      </div>
     </section>
   );
 };

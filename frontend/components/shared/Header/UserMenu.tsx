@@ -16,8 +16,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
     setIsOpen(!isOpen);
   };
 
-  const placeholderAvatar = `https://avatar.iran.liara.run/public`;
-
   return (
     <div className="relative flex items-center space-x-4">
       <span className="text-gray-300 text-lg font-semibold">
@@ -25,12 +23,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
       </span>
 
       <button onClick={toggleDropdown} className="focus:outline-none">
-        <Image
-          src={user.profilePicture || placeholderAvatar}
+        <img
+          src={
+            user.profilePicture
+              ? `http://localhost:5000${user.profilePicture}`
+              : `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`
+          }
           alt="User avatar"
           width={40}
           height={40}
-          className="rounded-full border border-gray-500 shadow-md hover:shadow-lg duration-300"
+          className="h-10 w-10 object-cover rounded-full border border-gray-500 shadow-md hover:shadow-lg duration-300"
         />
       </button>
 

@@ -102,7 +102,7 @@ const getPostById = asyncHandler(async (req, res) => {
       .populate({
         path: 'authorId',
         model: 'User',
-        select: 'username',
+        select: 'username profilePicture',
       })
       .populate({
         path: 'categoryId',

@@ -1,5 +1,5 @@
 'use client';
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IPost, ICategory } from '@/interface';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -65,9 +65,6 @@ const EditPost = (props: any) => {
     if (post?.authorId._id) {
       formData.append('authorId', post.authorId._id);
     }
-    Array.from(formData.entries()).forEach(([key, value]) => {
-      console.log(key, value);
-    });
 
     try {
       const response = await fetch(
@@ -93,8 +90,6 @@ const EditPost = (props: any) => {
       toast.error('Failed to update post');
     }
   };
-
-  console.log('post', post);
   return (
     <div className="mx-20 m-5">
       <ToastContainer />

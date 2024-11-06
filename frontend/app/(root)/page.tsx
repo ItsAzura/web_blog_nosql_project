@@ -115,6 +115,18 @@ export default function Home() {
   return (
     <>
       <section className="py-14 ml-4">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-24 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[300px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[700px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[1000px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[1400px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[1600px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[2000px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[2200px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+          <div className="absolute mt-[2600px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
+        </div>
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-10">
           {/* Left - Text Section */}
           <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">

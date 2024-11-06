@@ -18,7 +18,7 @@ export interface IPost {
 }
 
 export interface IRole {
-  id: string;
+  _id: string;
   name: string;
 }
 
@@ -31,8 +31,10 @@ export interface IUser {
   _id: string;
   username: string;
   email: string;
+  password: string;
   profilePicture: string;
-  roleId: string;
+  roleId: IRole;
+  createdAt: string;
 }
 
 export interface TeamMember {
