@@ -1,6 +1,7 @@
 import asyncHandler from '../middlewares/asyncHandler.js';
 import connectDB from '../db.js';
 import Comment from '../models/comments.js';
+import { io } from '../index.js';
 
 const getAllComments = asyncHandler(async (req, res) => {
   try {
@@ -56,26 +57,17 @@ const getCommentsByUser = asyncHandler(async (req, res) => {
 });
 
 const createComment = asyncHandler(async (req, res) => {
-  const { postId, commenterId, comment, parentCommentId } = req.body;
-
-  if (!postId || !commenterId || !comment) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
   try {
     await connectDB();
-    const newComment = new Comment({
-      postId,
-      commenterId,
-      comment,
-      parentCommentId,
+    let newComment = await Comment.create(req.body);
+
+    newComment = await newComment.populate({
+      path: 'commenterId',
+      model: 'User',
+      select: 'username profilePicture',
     });
 
-    if (!newComment) {
-      return res.status(400).json({ message: 'Comment could not be created' });
-    }
-
-    await newComment.save();
+    io.emit('newComment', newComment);
     res.status(201).json(newComment);
   } catch (error) {
     console.error(error);
@@ -84,24 +76,23 @@ const createComment = asyncHandler(async (req, res) => {
 });
 
 const updateComment = asyncHandler(async (req, res) => {
-  const { comment } = req.body;
-
-  if (!comment) {
-    return res.status(400).json({ message: 'Comment is required' });
-  }
-
   try {
     await connectDB();
-    const updatedComment = await Comment.findByIdAndUpdate(
+    let updatedComment = await Comment.findByIdAndUpdate(
       req.params.id,
-      { comment, updatedAt: Date.now() },
-      { new: true }
+      req.body,
+      {
+        new: true,
+      }
     );
 
-    if (!updatedComment) {
-      return res.status(404).json({ message: 'Comment not found' });
-    }
+    updatedComment = await updatedComment.populate({
+      path: 'commenterId',
+      model: 'User',
+      select: 'username profilePicture',
+    });
 
+    io.emit('updateComment', updatedComment);
     res.json(updatedComment);
   } catch (error) {
     console.error(error);
@@ -112,11 +103,9 @@ const updateComment = asyncHandler(async (req, res) => {
 const deleteComment = asyncHandler(async (req, res) => {
   try {
     await connectDB();
-    const result = await Comment.findByIdAndDelete(req.params.id);
-    if (!result) {
-      return res.status(404).json({ message: 'Comment not found' });
-    }
-    res.json({ message: 'Comment deleted successfully' });
+    await Comment.findByIdAndDelete(req.params.id);
+    io.emit('deleteComment', req.params.id);
+    res.status(204).send();
   } catch (error) {
     console.error(error);
     res.status(500).send('Something broke!');

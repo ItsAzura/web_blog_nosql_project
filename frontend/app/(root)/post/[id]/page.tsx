@@ -70,16 +70,11 @@ const PostDetails = (props: any) => {
   }, [params.id]);
 
   useEffect(() => {
-    socket.on('newComment', (comment) => {
-      setComments((prevComments) => {
-        if (!prevComments.find((c) => c._id === comment._id)) {
-          return [...prevComments, comment];
-        }
-        return prevComments;
-      });
+    socket.on('newComment', (comment: IComment) => {
+      setComments((prevComments) => [...prevComments, comment]);
     });
 
-    socket.on('updateComment', (updatedComment) => {
+    socket.on('updateComment', (updatedComment: IComment) => {
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === updatedComment._id ? updatedComment : comment
@@ -87,7 +82,7 @@ const PostDetails = (props: any) => {
       );
     });
 
-    socket.on('deleteComment', (commentId) => {
+    socket.on('deleteComment', (commentId: string) => {
       setComments((prevComments) =>
         prevComments.filter((comment) => comment._id !== commentId)
       );
@@ -99,28 +94,27 @@ const PostDetails = (props: any) => {
       socket.off('deleteComment');
     };
   }, []);
-
   const addComment = async () => {
-    const comment = document.getElementById('comment') as HTMLTextAreaElement;
-    if (!comment.value) return;
+    const commentElement = document.getElementById(
+      'comment'
+    ) as HTMLTextAreaElement;
+    if (!commentElement.value) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          comment: comment.value,
-          postId: params.id,
-          commenterId: user?._id,
-        }),
+      const response = await axios.post('http://localhost:5000/api/comments', {
+        comment: commentElement.value,
+        postId: params.id,
+        commenterId: user?._id,
       });
 
-      const data = await response.json();
-      setComments([...comments, data]);
-      socket.emit('newComment', data);
-      comment.value = '';
+      if (response.status === 201) {
+        // Bình luận mới sẽ được thêm vào qua sự kiện 'newComment' từ socket
+        commentElement.value = '';
+        toast.success('Comment added successfully!');
+      }
     } catch (error) {
       console.error(error);
+      toast.error('Failed to add comment.');
     }
   };
 
@@ -137,16 +131,7 @@ const PostDetails = (props: any) => {
       );
 
       if (response.status === 200) {
-        const updatedComment = {
-          ...response.data,
-          comment: editingCommentText,
-        };
-        setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment._id === commentId ? updatedComment : comment
-          )
-        );
-        socket.emit('updateComment', updatedComment);
+        // Bình luận đã chỉnh sửa sẽ được cập nhật qua sự kiện 'updateComment' từ socket
         setEditingCommentId(null);
         toast.success('Comment updated successfully!');
       }
@@ -161,11 +146,8 @@ const PostDetails = (props: any) => {
       const response = await axios.delete(
         `http://localhost:5000/api/comments/${commentId}`
       );
-      if (response.status === 200) {
-        setComments((prevComments) =>
-          prevComments.filter((comment) => comment._id !== commentId)
-        );
-        socket.emit('deleteComment', commentId);
+      if (response.status === 200 || response.status === 204) {
+        // Bình luận sẽ được xóa qua sự kiện 'deleteComment' từ socket
         toast.success('Comment deleted successfully!');
       }
     } catch (error) {
@@ -191,6 +173,8 @@ const PostDetails = (props: any) => {
       response.data.map((favorite: IFavorite) => {
         if (favorite.postId === post?._id) {
           setIsFavorite(true);
+        } else {
+          setIsFavorite(false);
         }
       });
     } catch (error) {
