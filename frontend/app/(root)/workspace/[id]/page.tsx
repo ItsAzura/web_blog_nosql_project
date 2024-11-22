@@ -94,7 +94,7 @@ const PersonalWorkSpace = (props: any) => {
 
   const totalPages = posts.totalPage || 1;
 
-  console.log(posts);
+  console.log(posts.data);
 
   return (
     <div className="mx-20 m-5">

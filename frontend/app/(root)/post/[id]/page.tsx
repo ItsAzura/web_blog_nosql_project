@@ -26,6 +26,7 @@ const PostDetails = (props: any) => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>('');
   const [isFavorite, setIsFavorite] = useState<boolean>();
+  const [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get('blog_token');
@@ -219,6 +220,24 @@ const PostDetails = (props: any) => {
       toast.error('Failed to remove from favorites.');
     }
   };
+
+  const handleDeletePost = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/posts/${post?._id}`
+      );
+      if (response.status === 200 || response.status === 204) {
+        toast.success('Bài viết đã được xóa thành công!');
+        // Chuyển hướng về trang chủ sau khi xóa
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Không thể xóa bài viết.');
+    }
+    setIsDeletePostModalOpen(false);
+  };
+
   return (
     <section className="w-full min-h-screen px-6 sm:px-12 md:px-24 lg:px-36 xl:px-48 py-16  text-white">
       <ToastContainer />
@@ -278,7 +297,7 @@ const PostDetails = (props: any) => {
 
           <button
             className="text-white flex flex-row justify-center items-center bg-red-400  px-2 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 focus:outline-none"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsDeletePostModalOpen(true)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -484,6 +503,14 @@ const PostDetails = (props: any) => {
         message="Are you sure you want to delete this comment?"
         onConfirm={handleConfirmDeleteComment}
         onCancel={() => setIsModalOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={isDeletePostModalOpen}
+        title="Xác nhận xóa bài viết"
+        message="Are you sure you want to delete this Post?"
+        onConfirm={handleDeletePost}
+        onCancel={() => setIsDeletePostModalOpen(false)}
       />
 
       <div className="absolute inset-0 -z-10">

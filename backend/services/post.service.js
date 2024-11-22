@@ -159,7 +159,7 @@ const getPostsByUser = asyncHandler(async (req, res) => {
     // Thực hiện 2 queries song song để tăng tốc độ
     const [posts, totalPosts] = await Promise.all([
       Post.find(filter)
-        .select('title content createdAt imageUrl description')
+        .select('title content createdAt coverImage description')
         .populate({
           path: 'authorId',
           model: 'User',
