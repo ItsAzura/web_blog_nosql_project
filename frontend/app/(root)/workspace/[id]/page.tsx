@@ -45,7 +45,9 @@ const PersonalWorkSpace = (props: any) => {
         page: filter.page.toString(),
       })}
             `);
-
+      if (!response.ok) {
+        setPosts({ totalPage: 1, data: [] });
+      }
       const data = await response.json();
       setPosts({ totalPage: data.totalPage, data: data.posts });
     } catch (error) {
@@ -138,8 +140,8 @@ const PersonalWorkSpace = (props: any) => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-10 mb-8 ">
-        {posts && posts.data.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-8">
+        {posts && Array.isArray(posts.data) && posts.data.length > 0 ? (
           posts.data.map((post) => (
             <div
               key={post._id}
@@ -182,7 +184,7 @@ const PersonalWorkSpace = (props: any) => {
             </div>
           ))
         ) : (
-          <div>No Post Found</div>
+          <p>No posts found</p>
         )}
       </div>
       <div className="mt-10 py-3 flex flex-row items-center justify-center space-x-4">

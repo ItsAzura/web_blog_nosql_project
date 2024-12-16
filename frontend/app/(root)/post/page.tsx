@@ -21,7 +21,7 @@ const PostList = () => {
   const [filter, setFilter] = useState({
     page: 1,
     title: '',
-    category: '',
+    categoryId: '',
   });
   const [posts, setPosts] = useState<{
     totalPage: number;
@@ -114,19 +114,17 @@ const PostList = () => {
           onChange={handleFilterChange}
         />
         <select
-          name="category"
+          name="categoryId"
           className="w-11/12 p-3 bg-[rgba(41,125,204,0.2)] text-white rounded focus:outline-none focus:ring-2 focus:ring-[rgba(41,125,204,0.5)] hover:shadow-lg hover:shadow-[rgba(41,125,204,0.1)]"
-          value={filter.category}
+          value={filter.categoryId}
           onChange={handleFilterChange}
         >
-          <option value="" className="bg-[#0b1c37] text-[#e7e7ea]">
-            All Categories
-          </option>
+          <option value=""  className="bg-[#0b1c37] text-[#e7e7ea]">All Categories</option>
           {categories.map((category) => (
             <option
               key={category._id}
-              value={category.name}
-              className="bg-[#0b1c37] text-[#e7e7ea]"
+              value={category._id}
+               className="bg-[#0b1c37] text-[#e7e7ea]"
             >
               {category.name}
             </option>
