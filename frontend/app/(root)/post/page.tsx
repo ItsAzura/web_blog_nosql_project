@@ -119,12 +119,14 @@ const PostList = () => {
           value={filter.categoryId}
           onChange={handleFilterChange}
         >
-          <option value=""  className="bg-[#0b1c37] text-[#e7e7ea]">All Categories</option>
+          <option value="" className="bg-[#0b1c37] text-[#e7e7ea]">
+            All Categories
+          </option>
           {categories.map((category) => (
             <option
               key={category._id}
               value={category._id}
-               className="bg-[#0b1c37] text-[#e7e7ea]"
+              className="bg-[#0b1c37] text-[#e7e7ea]"
             >
               {category.name}
             </option>
@@ -233,14 +235,6 @@ const PostList = () => {
             </g>
           </svg>
         </button>
-      </div>
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-24 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute mt-[300px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute mt-[700px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute mt-[1000px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute mt-[1400px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
       </div>
     </div>
   );

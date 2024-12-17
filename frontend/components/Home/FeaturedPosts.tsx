@@ -2,6 +2,7 @@ import React from 'react';
 import { IPost } from '../../interface';
 import Link from 'next/link';
 import Image from 'next/image';
+import placeholder from '../../public/placeholder.jpg';
 
 interface FeaturedPostsProps {
   posts: IPost[];
@@ -26,7 +27,7 @@ const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
                 src={
                   post.coverImage
                     ? `http://localhost:5000${post.coverImage}`
-                    : '/placeholder.jpg'
+                    : placeholder
                 }
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

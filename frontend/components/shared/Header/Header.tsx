@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { IDecodedToken, IUser } from '@/interface';
+import logo from '../../../public/logo.png';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -46,7 +47,7 @@ const Header: React.FC = () => {
       if (response.data.message === 'User logged out successfully') {
         Cookies.remove('blog_token');
         setUser(null);
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Error during logout:', error);
@@ -54,10 +55,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="mx-20 my-4 p-4 bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] dark:bg-[#0f0f0f] backdrop-blur-lg rounded-lg shadow-lg">
+    <header className="mx-20 my-4 p-4 bg-gray-600 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold text-white">
-          <Image src="/logo.png" alt="Logo" width={90} height={40} />
+          <Image src={logo} alt="Logo" width={90} height={40} />
         </Link>
 
         <nav className="text-xl hidden md:flex space-x-8">

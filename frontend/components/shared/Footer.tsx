@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
   return (
-    <footer className="m-4 bg-[#0a0a0a] text-gray-300 py-8 rounded shadow-lg">
+    <footer className="m-4 bg-gray-600 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 py-8 shadow-lg">
       <div className="container mx-auto px-4">
         {/* Grid Footer Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -60,7 +60,7 @@ const LatestPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
 
       {/* View More button */}
       <div className="flex justify-end">
-        <Link href={`/posts`}>
+        <Link href={`/post`}>
           <button className="py-2 px-6 rounded border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-300">
             View More
           </button>

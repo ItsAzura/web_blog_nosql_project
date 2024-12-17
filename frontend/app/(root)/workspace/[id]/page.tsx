@@ -242,11 +242,6 @@ const PersonalWorkSpace = (props: any) => {
           </svg>
         </button>
       </div>
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-24 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        <div className="absolute mt-[300px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-      </div>
     </div>
   );
 };

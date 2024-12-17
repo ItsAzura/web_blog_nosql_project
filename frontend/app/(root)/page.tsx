@@ -5,12 +5,12 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import {} from '../../interface';
+import { IDecodedToken, IPost, IUser, ICategory } from '@/interface';
 import FeaturedPosts from '@/components/Home/FeaturedPosts';
 import LatestPosts from '@/components/Home/LatestPosts';
 import Testimonials from '@/components/Home/Testimonials';
 import CategoryList from '@/components/Home/CategoryList';
-import { IDecodedToken, IPost, IUser, ICategory } from '@/interface';
+import hero from '../../public/hero.png';
 
 const mockCategories = [
   { _id: '1', name: 'Technology', postCount: 12 },
@@ -47,88 +47,51 @@ const mockTestimonials = [
 
 export default function Home() {
   const [user, setUser] = useState<IUser | null>(null);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [likedPosts, setLikedPosts] = useState<IPost[]>([]);
+  const [latestPosts, setLatestPosts] = useState<IPost[]>([]);
 
   useEffect(() => {
-    const token = Cookies.get('blog_token');
-
-    if (token) {
-      const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
-
-      const fetchUserInfo = async () => {
-        try {
-          const response = await axios.get<IUser>(
+    const fetchData = async () => {
+      try {
+        const token = Cookies.get('blog_token');
+        if (token) {
+          const decodedToken: IDecodedToken = jwtDecode<IDecodedToken>(token);
+          const userResponse = await axios.get<IUser>(
             `http://localhost:5000/api/users/profile/${decodedToken.userId}`
           );
-
-          setUser(response.data);
-        } catch (error) {
-          console.error(error);
+          setUser(userResponse.data);
         }
-      };
 
-      fetchUserInfo();
-    }
+        const categoriesResponse = await fetch(
+          'http://localhost:5000/api/categories'
+        );
+        const categoriesData = await categoriesResponse.json();
+        setCategories(categoriesData);
+
+        const likedResponse = await fetch(
+          'http://localhost:5000/api/posts/top-liked'
+        );
+        const likedData = await likedResponse.json();
+        setLikedPosts(likedData);
+
+        const latestResponse = await fetch(
+          'http://localhost:5000/api/posts/latest'
+        );
+        const latestData = await latestResponse.json();
+        setLatestPosts(latestData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/categories');
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, [user]);
-
-  const [likedPosts, setLikedPosts] = useState<IPost[]>([]);
-  const fetchPosts = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/posts/top-liked');
-      const data = await response.json();
-      setLikedPosts(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const [latestPosts, setLatestPosts] = useState<IPost[]>([]);
-  const fetchLatestPosts = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/posts/latest');
-      const data = await response.json();
-      setLatestPosts(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-    fetchLatestPosts();
-  }, [categories]);
-
   return (
-    <>
+    <main>
       <section className="py-14 ml-4">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-24 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[300px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[700px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[1000px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[1400px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[1600px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[2000px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[2200px] top-96 left-0 w-64 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-          <div className="absolute mt-[2600px] top-96 right-0 w-72 h-64 rounded-full bg-white opacity-20 blur-3xl"></div>
-        </div>
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-10">
-          {/* Left - Text Section */}
           <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
             {user && (
               <p className="text-xl text-gray-200 dark:text-white mb-4">
@@ -142,31 +105,28 @@ export default function Home() {
               This is a simple blog application where you can create, read,
               update, and delete blogs.
             </p>
-            <button className="mt-6 bg-blue-500 text-white font-semibold px-6 py-3 rounded-md  transition duration-300 hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]">
+            <button className="mt-6 bg-blue-500 text-white font-semibold px-6 py-3 rounded-md transition duration-300 hover:drop-shadow-[0px_0px_4px_rgba(41,125,204,1)]">
               Enjoy your stay!
             </button>
           </div>
 
-          {/* Right - Image Section */}
           <div className="md:w-1/2 flex justify-center">
             <Image
-              src="/hero.png"
+              src={hero}
               alt="Illustration of people reading and writing blogs"
               width={500}
               height={500}
+              priority
               className="w-full max-w-sm md:max-w-md rounded-lg shadow-lg"
             />
           </div>
         </div>
       </section>
 
-      <FeaturedPosts posts={likedPosts} />
-
-      <CategoryList categories={categories} />
-
-      <LatestPosts posts={latestPosts} />
-
+      {likedPosts.length > 0 && <FeaturedPosts posts={likedPosts} />}
+      {categories.length > 0 && <CategoryList categories={categories} />}
+      {latestPosts.length > 0 && <LatestPosts posts={latestPosts} />}
       <Testimonials testimonials={mockTestimonials} />
-    </>
+    </main>
   );
 }

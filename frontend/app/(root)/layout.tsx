@@ -8,11 +8,13 @@ export default function MainLayout({
 }>) {
   return (
     <>
-      <body>
-        <Header />
-        {children}
-        <Footer />
-      </body>
+      <main>
+        <div className="p-8 bg-[url('/bg.jpg')] bg-cover bg-center shadow-lg min-h-screen space-y-10">
+          <Header />
+          {children}
+          <Footer />
+        </div>
+      </main>
     </>
   );
 }

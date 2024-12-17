@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import signup from '../../../public/sign-up.png';
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
@@ -187,10 +188,11 @@ const SignUp = () => {
         transition={{ duration: 1 }}
       >
         <Image
-          src={'/sign-in.png'}
-          alt="Login"
+          src={signup}
+          alt="Register"
           width={600}
           height={600}
+          priority
           className="md:ml-10 max-w-full h-auto md:max-w-lg hidden md:block"
         />
       </motion.div>
