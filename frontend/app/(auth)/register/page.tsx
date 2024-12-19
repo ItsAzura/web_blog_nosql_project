@@ -18,21 +18,21 @@ const SignUp = () => {
     e.preventDefault();
 
     if (!username || !email || !password || !confirmpassword) {
-      toast.error('Please fill all the fields');
+      toast.error('Vui lòng nhập đầy đủ thông tin');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
 
     if (password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+      toast.error('Vui lòng nhập mật khẩu dài hơn 8 ký tự');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
 
     if (password !== confirmpassword) {
-      toast.error('Passwords do not match');
+      toast.error('Mật khẩu không khớp');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
@@ -48,11 +48,11 @@ const SignUp = () => {
       });
 
       if (!res.ok) {
-        toast.error('Something went wrong');
+        toast.error('Lỗi tạo tài khoản');
         return;
       }
 
-      toast.success('User created successfully');
+      toast.success('Tạo tài khoản thành công');
       setUsername('');
       setEmail('');
       setPassword('');
@@ -63,7 +63,7 @@ const SignUp = () => {
       }, 2000);
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong');
+      toast.error('Lỗi tạo tài khoản');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }

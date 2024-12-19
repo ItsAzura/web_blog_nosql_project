@@ -3,6 +3,7 @@ import connectDB from '../db.js';
 import Comment from '../models/comments.js';
 import { io } from '../index.js';
 
+// Hàm này sẽ lấy tất cả các comments
 const getAllComments = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -17,6 +18,7 @@ const getAllComments = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ lấy tất cả các comments của một post
 const getCommentsByPost = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
 
@@ -36,6 +38,7 @@ const getCommentsByPost = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ lấy tất cả các comments của một user
 const getCommentsByUser = asyncHandler(async (req, res) => {
   const commenterId = req.params.commenterId;
 
@@ -56,6 +59,7 @@ const getCommentsByUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ tạo một comment mới
 const createComment = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -67,6 +71,7 @@ const createComment = asyncHandler(async (req, res) => {
       select: 'username profilePicture',
     });
 
+    // Gửi comment mới tới tất cả các client
     io.emit('newComment', newComment);
     res.status(201).json(newComment);
   } catch (error) {
@@ -75,6 +80,7 @@ const createComment = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ cập nhật một comment
 const updateComment = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -92,6 +98,7 @@ const updateComment = asyncHandler(async (req, res) => {
       select: 'username profilePicture',
     });
 
+    // Gửi comment đã cập nhật tới tất cả các client
     io.emit('updateComment', updatedComment);
     res.json(updatedComment);
   } catch (error) {
@@ -100,10 +107,12 @@ const updateComment = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ xóa một comment
 const deleteComment = asyncHandler(async (req, res) => {
   try {
     await connectDB();
     await Comment.findByIdAndDelete(req.params.id);
+    // Gửi id của comment đã xóa tới tất cả các client
     io.emit('deleteComment', req.params.id);
     res.status(204).send();
   } catch (error) {

@@ -4,7 +4,6 @@ import { ICategory, IUser, IDecodedToken } from '@/interface';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import router from 'next/router';
 import dynamic from 'next/dynamic';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -84,24 +83,24 @@ const CreatePost = () => {
       });
 
       if (response.ok) {
-        toast.success('Blog created successfully');
+        toast.success('Tạo bài viết thành công');
         setTimeout(() => {
           window.location.href = '/post';
         }, 2000);
       } else {
         const errorData = await response.json();
-        toast.error(errorData.message || 'Failed to create post');
+        toast.error(errorData.message || 'Lỗi khi tạo bài viết');
       }
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred. Please try again later.');
+      toast.error('Lỗi khi tạo bài viết');
     }
   };
 
   return (
-    <div className="mx-20 m-5">
+    <div className="mx-20 m-5 bg-[#0b1c37] p-10 rounded-lg shadow-lg ">
       <ToastContainer />
-      <h1 className="text-5xl pt-4 font-semibold text-white py-4 filter drop-shadow-[0px_0px_6px_rgba(41,125,204,1)] transition-shadow">
+      <h1 className=" text-5xl pt-4 font-semibold text-white py-4 filter drop-shadow-[0px_0px_6px_rgba(41,125,204,1)] transition-shadow">
         Create Your Blog
       </h1>
       <form className="w-[60%]" onSubmit={handleSubmit}>
@@ -239,24 +238,7 @@ const CreatePost = () => {
             isDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500'
           } w-36 p-3 text-white rounded transition-colors duration-300 ease-in-out`}
         >
-          Create Product
-        </button>
-        <button
-          className="my-4 flex flex-row items-center gap-2 bg-[#0b1c37] text-white p-2 border border-[rgba(41,125,204,0.5)] rounded-lg hover:shadow-lg hover:shadow-[rgba(41,125,204,0.1)]"
-          onClick={() => router.back()}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="2rem"
-            height="2rem"
-            viewBox="0 0 32 32"
-          >
-            <path
-              fill="currentColor"
-              d="M22 8v2c2.206 0 4 1.794 4 4s-1.794 4-4 4H10v-5l-6 6l6 6v-5h12c3.309 0 6-2.691 6-6s-2.691-6-6-6"
-            />
-          </svg>
-          <span>Back</span>
+          Create Blog
         </button>
       </form>
     </div>

@@ -16,7 +16,7 @@ const Login = () => {
     event.preventDefault();
 
     if (!email || !password) {
-      toast.error('Please fill all the fields');
+      toast.error('Làm ơn nhập đầy đủ thông tin');
       setShake(true);
       setTimeout(() => setShake(false), 500); // Reset shake after 500ms
       return;
@@ -34,14 +34,14 @@ const Login = () => {
       });
 
       if (!res.ok) {
-        toast.error('Invalid credentials');
+        toast.error('Lỗi đăng nhập');
         setShake(true);
         setTimeout(() => setShake(false), 500);
         return;
       }
 
       const result = await res.json();
-      toast.success('Login successfully');
+      toast.success('Đăng nhập thành công');
 
       setEmail('');
       setPassword('');
@@ -53,7 +53,7 @@ const Login = () => {
       }, 2000);
     } catch (error) {
       console.error(error);
-      toast.error('Invalid credentials');
+      toast.error('Lỗi đăng nhập');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -61,7 +61,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center px-4 py-10 md:px-20">
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -104,7 +104,10 @@ const Login = () => {
             </div>
 
             <div className="flex flex-col mb-4">
-              <label htmlFor="password" className="mb-2 font-semibold text-white">
+              <label
+                htmlFor="password"
+                className="mb-2 font-semibold text-white"
+              >
                 Password
               </label>
               <motion.input

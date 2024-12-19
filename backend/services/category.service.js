@@ -2,6 +2,7 @@ import asyncHandler from '../middlewares/asyncHandler.js';
 import connectDB from '../db.js';
 import Category from '../models/categories.js';
 
+// Hàm này sẽ lấy tất cả các categories
 const getAllCategories = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -16,6 +17,7 @@ const getAllCategories = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ tạo một category mới
 const createCategory = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
@@ -50,6 +52,7 @@ const createCategory = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ lấy một category theo id
 const getCategoryById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -64,6 +67,7 @@ const getCategoryById = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ cập nhật một category
 const updateCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
 
@@ -88,6 +92,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ xóa một category
 const deleteCategory = asyncHandler(async (req, res) => {
   try {
     await connectDB();

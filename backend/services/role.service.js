@@ -2,6 +2,7 @@ import asyncHandler from '../middlewares/asyncHandler.js';
 import connectDB from '../db.js';
 import Role from '../models/roles.js';
 
+//Hàm này sẽ lấy tất cả các roles
 const getAllRoles = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -16,6 +17,7 @@ const getAllRoles = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ tạo một role mới
 const createRole = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
@@ -40,6 +42,7 @@ const createRole = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ cập nhật một role
 const updateRole = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
@@ -69,6 +72,7 @@ const updateRole = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ xóa một role
 const deleteRole = asyncHandler(async (req, res) => {
   try {
     await connectDB();

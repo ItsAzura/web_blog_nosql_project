@@ -111,11 +111,11 @@ const PostDetails = (props: any) => {
       if (response.status === 201) {
         // Bình luận mới sẽ được thêm vào qua sự kiện 'newComment' từ socket
         commentElement.value = '';
-        toast.success('Comment added successfully!');
+        toast.success('Bình luận đã được thêm thành công!');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to add comment.');
+      toast.error('Không thể thêm bình luận.');
     }
   };
 
@@ -134,11 +134,11 @@ const PostDetails = (props: any) => {
       if (response.status === 200) {
         // Bình luận đã chỉnh sửa sẽ được cập nhật qua sự kiện 'updateComment' từ socket
         setEditingCommentId(null);
-        toast.success('Comment updated successfully!');
+        toast.success('Bình luận đã được cập nhật thành công!');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to update comment.');
+      toast.error('Không thể cập nhật bình luận.');
     }
   };
 
@@ -149,11 +149,11 @@ const PostDetails = (props: any) => {
       );
       if (response.status === 200 || response.status === 204) {
         // Bình luận sẽ được xóa qua sự kiện 'deleteComment' từ socket
-        toast.success('Comment deleted successfully!');
+        toast.success('Bình luận đã được xóa thành công!');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to delete comment.');
+      toast.error('Không thể xóa bình luận.');
     }
   };
 
@@ -198,10 +198,10 @@ const PostDetails = (props: any) => {
         postId: post?._id,
       });
       setIsFavorite(true);
-      toast.success('Added to favorites!');
+      toast.success('Thêm vào yêu thích thành công!');
     } catch (error) {
       console.error(error);
-      toast.error('Failed to add to favorites.');
+      toast.error('Không thể thêm vào yêu thích.');
     }
   };
 
@@ -214,10 +214,10 @@ const PostDetails = (props: any) => {
         },
       });
       setIsFavorite(false);
-      toast.success('Removed from favorites!');
+      toast.success('Xóa khỏi yêu thích thành công!');
     } catch (error) {
       console.error(error);
-      toast.error('Failed to remove from favorites.');
+      toast.error('Không thể xóa khỏi yêu thích.');
     }
   };
 
@@ -500,15 +500,15 @@ const PostDetails = (props: any) => {
       <ConfirmModal
         isOpen={isModalOpen}
         title="Confirm Delete"
-        message="Are you sure you want to delete this comment?"
+        message="Bạn có chắc chắn muốn xóa bình luận này không?"
         onConfirm={handleConfirmDeleteComment}
         onCancel={() => setIsModalOpen(false)}
       />
 
       <ConfirmModal
         isOpen={isDeletePostModalOpen}
-        title="Xác nhận xóa bài viết"
-        message="Are you sure you want to delete this Post?"
+        title="Confirm Delete"
+        message="Bạn có chắc chắn muốn xóa bài viết này không?"
         onConfirm={handleDeletePost}
         onCancel={() => setIsDeletePostModalOpen(false)}
       />

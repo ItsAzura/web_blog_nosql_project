@@ -58,16 +58,16 @@ const UpdateProfile = (props: any) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.log(errorData);
-        toast.error('Failed to update profile');
+        toast.error('Lỗi cập nhật thông tin');
       } else {
-        toast.success('Profile updated successfully');
+        toast.success('Cập nhật thông tin thành công');
         setTimeout(() => {
           window.location.href = `/profile/${params.id}`;
         }, 2000);
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to update post');
+      toast.error('Lỗi cập nhật thông tin');
     }
   };
   return (

@@ -3,6 +3,7 @@ import connectDB from '../db.js';
 import Favorite from '../models/favorites.js';
 import Post from '../models/posts.js';
 
+// Hàm này sẽ lấy tất cả các favorites
 const getAllFavorites = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -17,6 +18,7 @@ const getAllFavorites = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ lấy tất cả các favorites của một user
 const getFavoritesByUser = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
 
@@ -32,6 +34,7 @@ const getFavoritesByUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ lấy tất cả các favorites của một post
 const getFavoritesByPost = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   try {
@@ -46,6 +49,7 @@ const getFavoritesByPost = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ tạo một favorite mới
 const createFavorite = asyncHandler(async (req, res) => {
   const { userId, postId } = req.body;
 
@@ -87,6 +91,7 @@ const createFavorite = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ xóa một favorite
 const deleteFavorite = asyncHandler(async (req, res) => {
   const { userId, postId } = req.body;
 

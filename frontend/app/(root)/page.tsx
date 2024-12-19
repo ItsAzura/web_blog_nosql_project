@@ -90,7 +90,7 @@ export default function Home() {
 
   return (
     <main>
-      <section className="py-14 ml-4">
+      <section className="py-14 ml-12">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-10">
           <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
             {user && (

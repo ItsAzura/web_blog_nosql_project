@@ -78,16 +78,16 @@ const EditPost = (props: any) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.log(errorData);
-        toast.error(`Failed to update post: ${errorData.message}`);
+        toast.error(`Cập nhật bài viết thất bại: ${errorData.message}`);
       } else {
-        toast.success('Post updated successfully');
+        toast.success('Cập nhật bài viết thành công');
         setTimeout(() => {
           window.location.href = `/post/${params.id}`;
         }, 2000);
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to update post');
+      toast.error('Lỗi khi cập nhật bài viết');
     }
   };
   return (

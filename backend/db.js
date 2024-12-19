@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Hàm này sẽ kết nối tới MongoDB
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);

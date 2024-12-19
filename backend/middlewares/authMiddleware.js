@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import asyncHandler from './asyncHandler.js';
 
+//Hàm này sẽ kiểm tra xem user đã đăng nhập chưa
 const authenticate = asyncHandler(async (req, res, next) => {
   let token;
 

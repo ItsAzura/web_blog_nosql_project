@@ -4,8 +4,8 @@ import User from '../models/users.js';
 import bcrypt from 'bcryptjs';
 import createToken from '../utils/createToken.js';
 import Role from '../models/roles.js';
-import { upload } from './upload.service.js';
 
+// Hàm này sẽ lấy tất cả các users
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -20,6 +20,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ tạo một user mới
 const createUser = asyncHandler(async (req, res) => {
   const { username, password, email } = req.body;
   const roleName = 'user';
@@ -73,6 +74,7 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ đăng nhập một user
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -97,6 +99,7 @@ const loginUser = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Tạo token
     const token = createToken(res, existingUser._id);
 
     res.status(200).json({
@@ -113,6 +116,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ đăng xuất một user
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie('blog_token', '', {
     httpOnly: true,
@@ -143,6 +147,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// Hàm này sẽ cập nhật thông tin user
 const updateProfile = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const { username, email, password } = req.body;

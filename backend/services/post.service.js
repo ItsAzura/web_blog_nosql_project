@@ -4,6 +4,7 @@ import Post from '../models/posts.js';
 import Category from '../models/categories.js';
 import mongoose from 'mongoose';
 
+//Hàm này sẽ lấy tất cả các bài viết
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -22,9 +23,11 @@ const getAllPosts = asyncHandler(async (req, res) => {
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
+    // Tìm tất cả các bài viết theo filter, sắp xếp theo thời gian tạo mới nhất
     const posts = await Post.find(filter)
       .skip(skip)
       .limit(parseInt(limit))
+      .sort({ createdAt: -1 })
       .populate({
         path: 'authorId',
         model: 'User',
@@ -53,6 +56,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ lấy 3 bài viết được like nhiều nhất
 const getTopLikedPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -62,7 +66,7 @@ const getTopLikedPosts = asyncHandler(async (req, res) => {
         model: 'User',
         select: 'username',
       })
-      .sort({ liked: -1 })
+      .sort({ authorId: -1 })
       .limit(3);
     if (!posts) {
       return res.status(404).json({ message: 'No posts found' });
@@ -74,6 +78,7 @@ const getTopLikedPosts = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ lấy 3 bài viết mới nhất
 const getLatestPosts = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -95,6 +100,7 @@ const getLatestPosts = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ lấy bài viết theo id
 const getPostById = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -119,6 +125,7 @@ const getPostById = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ lấy tất cả các bài viết của một user
 const getPostsByUser = asyncHandler(async (req, res) => {
   try {
     await connectDB();
@@ -128,6 +135,7 @@ const getPostsByUser = asyncHandler(async (req, res) => {
     const pageNum = parseInt(page, 10);
     const limitNum = parseInt(limit, 10);
 
+    // Kiểm tra xem page và limit có hợp lệ không
     if (!pageNum || pageNum <= 0) {
       return res.status(400).json({
         success: false,
@@ -156,7 +164,7 @@ const getPostsByUser = asyncHandler(async (req, res) => {
 
     const skip = (pageNum - 1) * limitNum;
 
-    // Thực hiện 2 queries song song để tăng tốc độ
+    // Tìm tất cả các bài viết của user theo filter
     const [posts, totalPosts] = await Promise.all([
       Post.find(filter)
         .select('title content createdAt coverImage description')
@@ -172,6 +180,7 @@ const getPostsByUser = asyncHandler(async (req, res) => {
       Post.countDocuments(filter),
     ]);
 
+    // Nếu không tìm thấy bài viết nào
     if (posts.length === 0) {
       return res.status(404).json({
         success: false,
@@ -200,6 +209,7 @@ const getPostsByUser = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ tạo một bài viết mới
 const createPost = asyncHandler(async (req, res) => {
   const { title, body, authorId, categoryName } = req.body;
 
@@ -248,6 +258,7 @@ const createPost = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ cập nhật một bài viết
 const updatePost = asyncHandler(async (req, res) => {
   const { title, body, authorId, categoryName } = req.body;
 
@@ -293,6 +304,7 @@ const updatePost = asyncHandler(async (req, res) => {
   }
 });
 
+//Hàm này sẽ xóa một bài viết
 const deletePost = asyncHandler(async (req, res) => {
   try {
     await connectDB();

@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 
+//Cài đặt storage cho multer để lưu trữ file ảnh
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, 'uploads/');
@@ -11,6 +12,7 @@ const storage = multer.diskStorage({
   },
 });
 
+// Upload file
 const upload = multer({ storage: storage });
 
 export { upload };
